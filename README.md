@@ -1,6 +1,6 @@
 # KeyHold
 
-KeyHold is a small Windows 11 tray utility for single-player games. It captures the keyboard keys you are physically holding when you activate it, keeps those keys held with synthetic input, and releases them when you stop.
+KeyHold is a small Windows 11 tray utility for games and simple personal automation tasks. It captures the keyboard keys you are physically holding when you activate it, keeps those keys held with synthetic input, and releases them when you stop.
 
 The beta product name is KeyHold. The early brand board keeps KeyLatch as a backup route and parks KeyRun and PressLatch for now.
 

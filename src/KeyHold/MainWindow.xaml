@@ -48,7 +48,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock Text="KeyHold" FontSize="28" FontWeight="SemiBold" />
-                    <TextBlock Text="Held-key utility for single-player Windows gaming"
+                    <TextBlock Text="Held-key utility for games and simple Windows tasks"
                                Foreground="{DynamicResource MutedTextBrush}"
                                Margin="0,4,0,0" />
                 </StackPanel>
@@ -184,4 +184,3 @@
                    TextWrapping="Wrap" />
     </Grid>
 </Window>
-

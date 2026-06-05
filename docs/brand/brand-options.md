@@ -2,12 +2,12 @@
 
 ## Recommendation: KeyHold
 
-KeyHold is the best early brand lock for this product. It is plainspoken, descriptive, and already matches the repo, app title, tray copy, privacy note, and security docs. The name says what the utility does without implying macro playback, competitive advantage, or hidden automation.
+KeyHold is the best early brand lock for this product. It is plainspoken, descriptive, and already matches the repo, app title, tray copy, privacy note, and current docs. The name says what the utility does and leaves room for gaming and simple automation tasks on an individual Windows PC.
 
-- Positioning: a visible local Windows tray utility for holding physically pressed keys in single-player games.
-- Tone: precise, calm, practical, and safety-aware.
-- Visual cue: a keycap held in a locked or latched state.
-- Tray mark: compact keycap outline, blue when idle, green when holding.
+- Positioning: a local Windows tray utility for holding physically pressed keys in games and simple personal workflows.
+- Tone: precise, calm, practical, and lightweight.
+- Visual cue: a blue held-key bar paired with a top-down `K` keycap.
+- Tray mark: compact keycap-and-hold mark, blue when idle, green when holding.
 - Dark palette: graphite, near-black, electric blue, cool gray, and status green.
 - Light palette: white, blue-tinted gray, rich blue, charcoal, and status green.
 - Keep: current `KeyHold` code name, app title, settings folder, tray text, privacy language, and security docs.
@@ -22,10 +22,10 @@ KeyLatch is the strongest alternate if KeyHold becomes unavailable or confusing.
 
 ## Parked: KeyRun
 
-KeyRun has good gaming energy, but it is less precise. It can imply repeated running, automation, or a broader macro product, which is not the intended beta scope.
+KeyRun has good gaming energy, but it is less precise. It can imply repeated running or a broader task-runner product, which is not the intended beta scope.
 
 - Strength: memorable and game-adjacent.
-- Risk: less ownable, less safety-aligned, and easier to confuse with other tools.
+- Risk: less ownable, less direct, and easier to confuse with other tools.
 - Use if: the product later expands toward run-state profiles rather than simple held-key behavior.
 
 ## Parked: PressLatch
@@ -38,4 +38,10 @@ PressLatch is accurate but less friendly. It sounds more like an internal utilit
 
 ## Early Lock
 
-Use KeyHold as the beta product name and design system anchor. Keep the current blue graphite visual route, add green only for active holding state, and avoid visual language that suggests stealth, scripting, or competitive automation.
+Use KeyHold as the beta product name and design system anchor. Keep the current blue graphite visual route, add green only for active holding state, and avoid choices that would make the app harder to publish openly later.
+
+## Publishing Guardrails
+
+- Keep the app metadata accurate about what the utility does and where it may have limits.
+- Keep the privacy note plain and easy to find.
+- Prefer dependencies, packaging, and licensing choices that leave room for a Microsoft Store listing or an open-source release later.
