@@ -6,8 +6,9 @@ KeyHold is the best early brand lock for this product. It is plainspoken, descri
 
 - Positioning: a local Windows tray utility for holding physically pressed keys in games and simple personal workflows.
 - Tone: precise, calm, practical, and lightweight.
-- Visual cue: a blue held-key bar paired with a top-down `K` keycap.
-- Tray mark: compact keycap-and-hold mark, blue when idle, green when holding.
+- Selected logo route: KH Key Monogram from the generated Logo Explorer pass.
+- Visual cue: a dark top-down keycap with a small white legend dash and a blue held-state underline.
+- Tray mark: compact keycap-and-underline mark, blue when idle, green when holding.
 - Dark palette: graphite, near-black, electric blue, cool gray, and status green.
 - Light palette: white, blue-tinted gray, rich blue, charcoal, and status green.
 - Keep: current `KeyHold` code name, app title, settings folder, tray text, privacy language, and security docs.
