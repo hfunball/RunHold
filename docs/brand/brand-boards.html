@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KeyHold Brand Boards</title>
+  <style>
+    :root {
+      color-scheme: dark light;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #0d1015;
+      color: #f5f7fa;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px;
+      background: #0d1015;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+
+    .intro {
+      margin: 0 0 28px;
+      color: #a9b2c3;
+      max-width: 760px;
+      line-height: 1.45;
+    }
+
+    .boards {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .board {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 18px 45px rgb(0 0 0 / 28%);
+    }
+
+    .board header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mark {
+      width: 50px;
+      height: 50px;
+      flex: 0 0 auto;
+    }
+
+    .name {
+      font-size: 24px;
+      font-weight: 650;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .content {
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .mock {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .mock-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mock-title {
+      font-weight: 650;
+      font-size: 18px;
+    }
+
+    .pill {
+      background: var(--accent);
+      color: var(--pill-text);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .rows {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      color: var(--muted);
+    }
+
+    .row strong {
+      color: var(--text);
+    }
+
+    .palette {
+      display: flex;
+      gap: 8px;
+    }
+
+    .swatch {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      border: 1px solid rgb(255 255 255 / 18%);
+      background: var(--color);
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>KeyHold Brand Boards</h1>
+    <p class="intro">Three understated tech routes for the beta tray app. Each route includes a logo direction, tray mark behavior, dark and light UI palette, and a small settings surface.</p>
+
+    <section class="boards">
+      <article class="board" style="--bg:#101318;--panel:#171b22;--text:#f5f7fa;--muted:#a9b2c3;--border:#29313d;--accent:#35a7ff;--pill-text:#07111b;">
+        <header>
+          <svg class="mark" viewBox="0 0 64 64" aria-label="KeyLatch logo">
+            <rect x="5" y="5" width="54" height="54" rx="12" fill="#171b22" stroke="#35a7ff" stroke-width="3"/>
+            <rect x="17" y="23" width="27" height="9" rx="3" fill="#35a7ff"/>
+            <rect x="37" y="29" width="8" height="19" rx="3" fill="#35a7ff"/>
+            <circle cx="24" cy="41" r="7" fill="#f5f7fa"/>
+          </svg>
+          <div>
+            <div class="name">KeyLatch</div>
+            <div class="note">Most direct, most ownable feeling.</div>
+          </div>
+        </header>
+        <div class="content">
+          <div class="mock">
+            <div class="mock-top">
+              <div>
+                <div class="mock-title">KeyLatch</div>
+                <div class="caption">Holding: Shift, W</div>
+              </div>
+              <div class="pill">ACTIVE</div>
+            </div>
+            <div class="rows">
+              <div class="row"><strong>Enable</strong><span>Page Up</span></div>
+              <div class="row"><strong>Stop</strong><span>Page Down</span></div>
+              <div class="row"><strong>Theme</strong><span>Dark</span></div>
+            </div>
+          </div>
+          <div class="palette">
+            <span class="swatch" style="--color:#101318"></span>
+            <span class="swatch" style="--color:#171b22"></span>
+            <span class="swatch" style="--color:#35a7ff"></span>
+            <span class="swatch" style="--color:#f5f7fa"></span>
+          </div>
+          <p class="caption">Best default for the product: clear, practical, and easy to explain.</p>
+        </div>
+      </article>
+
+      <article class="board" style="--bg:#07111b;--panel:#0f1b2a;--text:#f7fbff;--muted:#9eb4c8;--border:#25415c;--accent:#27d8ff;--pill-text:#061016;">
+        <header>
+          <svg class="mark" viewBox="0 0 64 64" aria-label="KeyRun logo">
+            <rect x="5" y="5" width="54" height="54" rx="12" fill="#0f1b2a" stroke="#27d8ff" stroke-width="3"/>
+            <path d="M17 35h25l-6 8h9l10-13-10-13h-9l6 8H17z" fill="#27d8ff"/>
+            <circle cx="18" cy="46" r="4" fill="#f7fbff"/>
+          </svg>
+          <div>
+            <div class="name">KeyRun</div>
+            <div class="note">Good energy, but less unique.</div>
+          </div>
+        </header>
+        <div class="content">
+          <div class="mock">
+            <div class="mock-top">
+              <div>
+                <div class="mock-title">KeyRun</div>
+                <div class="caption">Ready for Satisfactory</div>
+              </div>
+              <div class="pill">READY</div>
+            </div>
+            <div class="rows">
+              <div class="row"><strong>Mode</strong><span>Mouse trigger</span></div>
+              <div class="row"><strong>Trigger</strong><span>Mouse Button 4</span></div>
+              <div class="row"><strong>Theme</strong><span>System</span></div>
+            </div>
+          </div>
+          <div class="palette">
+            <span class="swatch" style="--color:#07111b"></span>
+            <span class="swatch" style="--color:#0f1b2a"></span>
+            <span class="swatch" style="--color:#27d8ff"></span>
+            <span class="swatch" style="--color:#f7fbff"></span>
+          </div>
+          <p class="caption">Best if the app expands toward repeat-run behaviors, but the name already appears in several unrelated projects.</p>
+        </div>
+      </article>
+
+      <article class="board" style="--bg:#10130f;--panel:#181d16;--text:#f5f8f0;--muted:#abb8a4;--border:#2c3828;--accent:#6ee680;--pill-text:#061106;">
+        <header>
+          <svg class="mark" viewBox="0 0 64 64" aria-label="PressLatch logo">
+            <rect x="5" y="5" width="54" height="54" rx="12" fill="#181d16" stroke="#6ee680" stroke-width="3"/>
+            <rect x="15" y="20" width="34" height="22" rx="11" fill="#2c3828"/>
+            <circle cx="38" cy="31" r="10" fill="#6ee680"/>
+            <rect x="21" y="45" width="22" height="4" rx="2" fill="#f5f8f0"/>
+          </svg>
+          <div>
+            <div class="name">PressLatch</div>
+            <div class="note">Mechanical, simple, utility-first.</div>
+          </div>
+        </header>
+        <div class="content">
+          <div class="mock">
+            <div class="mock-top">
+              <div>
+                <div class="mock-title">PressLatch</div>
+                <div class="caption">No keys held</div>
+              </div>
+              <div class="pill">IDLE</div>
+            </div>
+            <div class="rows">
+              <div class="row"><strong>Enable</strong><span>Page Up</span></div>
+              <div class="row"><strong>Emergency</strong><span>F12</span></div>
+              <div class="row"><strong>Startup</strong><span>On</span></div>
+            </div>
+          </div>
+          <div class="palette">
+            <span class="swatch" style="--color:#10130f"></span>
+            <span class="swatch" style="--color:#181d16"></span>
+            <span class="swatch" style="--color:#6ee680"></span>
+            <span class="swatch" style="--color:#f5f8f0"></span>
+          </div>
+          <p class="caption">Solid backup route. It feels precise, though a little less friendly than KeyLatch.</p>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
+

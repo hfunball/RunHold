@@ -1,0 +1,28 @@
+# Beta Test Plan
+
+## Diagnostics
+
+- Confirm Page Up, Page Down, mouse buttons, and any special keyboard keys are detected.
+- Confirm captured names match Windows virtual-key names.
+
+## Baseline
+
+- Test in Notepad or a visible key-test surface.
+- Hold `W`, activate, release physical `W`, and verify continued hold.
+- Hold `Shift+W`, activate, release both, and verify continued combo.
+- Stop with Page Down, toggle mode, mouse trigger, and tray `Release All`.
+
+## Games
+
+- Satisfactory on Steam: movement, sprint/movement, and building use.
+- The Planet Crafter on Steam: movement, sprint/movement, and repeated travel/building use.
+- Far Cry 6 on Epic: movement and sprint/movement, with higher compatibility risk.
+
+## Safety
+
+- Alt-tab while active.
+- Restart KeyHold while active.
+- Sleep/wake while active.
+- Keyboard disconnect/reconnect.
+- Verify no stuck keys after emergency stop or app exit.
+
