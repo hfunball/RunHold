@@ -12,6 +12,10 @@ public sealed class AppSettings
 
     public InputBinding MouseTrigger { get; set; } = InputBinding.Mouse(MouseTriggerCode.XButton1);
 
+    public KeyEmulationMode KeyEmulationMode { get; set; } = KeyEmulationMode.StableHold;
+
+    public int RepeatedPressIntervalMilliseconds { get; set; } = 45;
+
     public ThemeMode Theme { get; set; } = ThemeMode.Dark;
 
     public bool LaunchToTray { get; set; } = true;

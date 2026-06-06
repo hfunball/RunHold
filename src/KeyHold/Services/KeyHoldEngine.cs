@@ -4,11 +4,10 @@ namespace KeyHold.Services;
 
 public sealed class KeyHoldEngine : IDisposable
 {
-    private static readonly TimeSpan DefaultRepeatInterval = TimeSpan.FromMilliseconds(45);
+    private const int DefaultRepeatedPressIntervalMilliseconds = 45;
 
     private readonly object gate = new();
     private readonly IInputSender inputSender;
-    private readonly TimeSpan repeatInterval;
     private readonly HashSet<int> physicalKeysDown = [];
     private readonly HashSet<int> heldKeys = [];
     private AppSettings settings;
@@ -17,15 +16,9 @@ public sealed class KeyHoldEngine : IDisposable
     private bool uiCaptureActive;
 
     public KeyHoldEngine(AppSettings settings, IInputSender inputSender)
-        : this(settings, inputSender, DefaultRepeatInterval)
-    {
-    }
-
-    internal KeyHoldEngine(AppSettings settings, IInputSender inputSender, TimeSpan repeatInterval)
     {
         this.settings = settings;
         this.inputSender = inputSender;
-        this.repeatInterval = repeatInterval;
         Status = new HoldStatus(false, Array.Empty<int>(), "Idle");
     }
 
@@ -40,6 +33,7 @@ public sealed class KeyHoldEngine : IDisposable
         lock (gate)
         {
             settings = newSettings;
+            UpdateRepeatTimerLocked();
         }
 
         Log("Settings updated.");
@@ -116,6 +110,10 @@ public sealed class KeyHoldEngine : IDisposable
                 if (heldKeys.Contains(input.VirtualKey))
                 {
                     suppress = true;
+                    if (settings.KeyEmulationMode == KeyEmulationMode.StableHold)
+                    {
+                        inputSender.SendKeyDown(input.VirtualKey);
+                    }
                 }
             }
 
@@ -203,7 +201,7 @@ public sealed class KeyHoldEngine : IDisposable
             heldKeys.Add(key);
         }
 
-        StartRepeatTimerLocked();
+        UpdateRepeatTimerLocked();
         PublishStatusLocked("Hold active");
         LogLocked($"Holding {string.Join(", ", snapshot.Select(VirtualKeyNames.GetName))}.");
     }
@@ -227,9 +225,22 @@ public sealed class KeyHoldEngine : IDisposable
         LogLocked($"Released all keys: {reason}.");
     }
 
+    private void UpdateRepeatTimerLocked()
+    {
+        StopRepeatTimerLocked();
+        if (heldKeys.Count > 0 && settings.KeyEmulationMode == KeyEmulationMode.RepeatedPress)
+        {
+            StartRepeatTimerLocked();
+        }
+    }
+
     private void StartRepeatTimerLocked()
     {
-        repeatTimer ??= new System.Threading.Timer(_ => RepeatHeldKeys(), null, repeatInterval, repeatInterval);
+        var milliseconds = settings.RepeatedPressIntervalMilliseconds > 0
+            ? settings.RepeatedPressIntervalMilliseconds
+            : DefaultRepeatedPressIntervalMilliseconds;
+        var interval = TimeSpan.FromMilliseconds(milliseconds);
+        repeatTimer ??= new System.Threading.Timer(_ => RepeatHeldKeys(), null, interval, interval);
     }
 
     private void StopRepeatTimerLocked()
@@ -242,7 +253,7 @@ public sealed class KeyHoldEngine : IDisposable
     {
         lock (gate)
         {
-            if (disposed || heldKeys.Count == 0)
+            if (disposed || heldKeys.Count == 0 || settings.KeyEmulationMode != KeyEmulationMode.RepeatedPress)
             {
                 return;
             }

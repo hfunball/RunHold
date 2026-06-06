@@ -172,6 +172,8 @@ $form.Add_Activated({
         StopBinding = @{ Device = 0; Code = 34; DisplayName = 'Page Down' }
         EmergencyBinding = @{ Device = 0; Code = 123; DisplayName = 'F12' }
         MouseTrigger = @{ Device = 1; Code = 1; DisplayName = 'Mouse Button 4' }
+        KeyEmulationMode = 1
+        RepeatedPressIntervalMilliseconds = 45
         Theme = 0
         LaunchToTray = $false
         ShowNotifications = $false
@@ -245,7 +247,7 @@ $form.Add_Activated({
         throw "Text target hold smoke failed. Expected repeated W output, but found only $wCount W characters. Text was: '$text'"
     }
 
-    'KeyHold text-target smoke passed: W repeated after enable and stopped after stop.'
+    'KeyHold repeated-press text-target smoke passed: W repeated after enable and stopped after stop.'
 }
 finally {
     [Environment]::SetEnvironmentVariable('KEYHOLD_ACCEPT_EXTERNAL_INJECTED_INPUT_FOR_SMOKE', $previousSmokeFlag, 'Process')

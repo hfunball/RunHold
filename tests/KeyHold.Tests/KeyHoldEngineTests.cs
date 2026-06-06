@@ -7,6 +7,8 @@ namespace KeyHold.Tests;
 [TestClass]
 public sealed class KeyHoldEngineTests
 {
+    private const int A = 0x41;
+    private const int S = 0x53;
     private const int W = 0x57;
     private const int Shift = 0x10;
     private const int PageUp = 0x21;
@@ -125,22 +127,66 @@ public sealed class KeyHoldEngineTests
     }
 
     [TestMethod]
-    public void ActiveHold_RepeatsHeldKeysUntilStop()
+    public void StableHold_DefaultDoesNotPulseHeldKeys()
     {
         var sender = new RecordingInputSender();
-        using var engine = new KeyHoldEngine(new AppSettings(), sender, TimeSpan.FromMilliseconds(10));
+        using var engine = CreateEngine(new AppSettings(), sender);
+
+        engine.HandleKeyboardEvent(Down(W));
+        engine.HandleKeyboardEvent(Down(PageUp));
+
+        Thread.Sleep(60);
+
+        Assert.AreEqual(1, sender.DownCount(W));
+        Assert.AreEqual(0, sender.UpCount(W));
+        Assert.IsTrue(engine.Status.IsActive);
+    }
+
+    [TestMethod]
+    public void StableHold_CapturesThreeKeysAndReassertsAfterPhysicalRelease()
+    {
+        var sender = new RecordingInputSender();
+        using var engine = CreateEngine(new AppSettings(), sender);
+
+        engine.HandleKeyboardEvent(Down(A));
+        engine.HandleKeyboardEvent(Down(S));
+        engine.HandleKeyboardEvent(Down(W));
+        engine.HandleKeyboardEvent(Down(PageUp));
+
+        CollectionAssert.AreEquivalent(new[] { A, S, W }, sender.DownKeys);
+        CollectionAssert.AreEquivalent(new[] { A, S, W }, engine.Status.HeldKeys.ToArray());
+
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.AreEqual(2, sender.DownCount(W));
+        Assert.AreEqual(0, sender.UpCount(W));
+
+        Assert.IsTrue(engine.HandleKeyboardEvent(Down(PageDown)));
+
+        CollectionAssert.AreEquivalent(new[] { W, S, A }, sender.UpKeys);
+        Assert.IsFalse(engine.Status.IsActive);
+    }
+
+    [TestMethod]
+    public void RepeatedPressMode_PulsesHeldKeysUntilStop()
+    {
+        var sender = new RecordingInputSender();
+        var settings = new AppSettings
+        {
+            KeyEmulationMode = KeyEmulationMode.RepeatedPress,
+            RepeatedPressIntervalMilliseconds = 10
+        };
+        using var engine = CreateEngine(settings, sender);
 
         engine.HandleKeyboardEvent(Down(W));
         engine.HandleKeyboardEvent(Down(PageUp));
 
         Assert.IsTrue(WaitUntil(() => sender.DownCount(W) >= 3));
+        Assert.IsTrue(sender.UpCount(W) >= 1);
 
-        Assert.IsTrue(engine.HandleKeyboardEvent(Down(W)));
         Assert.IsTrue(engine.HandleKeyboardEvent(Down(PageDown)));
 
         var downCountAfterStop = sender.DownCount(W);
         Thread.Sleep(40);
-
         Assert.AreEqual(downCountAfterStop, sender.DownCount(W));
         CollectionAssert.Contains(sender.UpKeys, W);
         Assert.IsFalse(engine.Status.IsActive);
@@ -158,7 +204,7 @@ public sealed class KeyHoldEngineTests
 
     private static KeyHoldEngine CreateEngine(AppSettings settings, RecordingInputSender sender)
     {
-        return new KeyHoldEngine(settings, sender, TimeSpan.FromSeconds(10));
+        return new KeyHoldEngine(settings, sender);
     }
 
     private static bool WaitUntil(Func<bool> condition)
@@ -226,6 +272,14 @@ public sealed class KeyHoldEngineTests
             lock (gate)
             {
                 return downKeys.Count(key => key == virtualKey);
+            }
+        }
+
+        public int UpCount(int virtualKey)
+        {
+            lock (gate)
+            {
+                return upKeys.Count(key => key == virtualKey);
             }
         }
     }

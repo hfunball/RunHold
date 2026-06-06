@@ -10,6 +10,7 @@
 - Test in Notepad or a visible key-test surface.
 - Hold `W`, activate, release physical `W`, and verify continued hold.
 - Hold `Shift+W`, activate, release both, and verify continued combo.
+- Hold `A+S+W`, activate, release all three physical keys, and verify all three stay logically down until stop.
 - Stop with Page Down, toggle mode, mouse trigger, and tray `Release All`.
 
 ## Games
@@ -25,4 +26,3 @@
 - Sleep/wake while active.
 - Keyboard disconnect/reconnect.
 - Verify no stuck keys after emergency stop or app exit.
-
