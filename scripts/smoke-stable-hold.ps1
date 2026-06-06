@@ -112,6 +112,45 @@ try {
     Start-Sleep -Milliseconds 40
     [KeyHoldStableSmokeInput]::KeyUp($pageUp)
     Start-Sleep -Milliseconds 100
+    [KeyHoldStableSmokeInput]::KeyDown($pageDown)
+    Start-Sleep -Milliseconds 40
+    [KeyHoldStableSmokeInput]::KeyUp($pageDown)
+    Start-Sleep -Milliseconds 150
+
+    $handoffSamples = 0
+    $handoffDownSamples = 0
+    for ($i = 0; $i -lt 15; $i++) {
+        $allDown = [KeyHoldStableSmokeInput]::IsDown($a) -and [KeyHoldStableSmokeInput]::IsDown($s) -and [KeyHoldStableSmokeInput]::IsDown($w)
+        if ($allDown) {
+            $handoffDownSamples++
+        }
+
+        $handoffSamples++
+        Start-Sleep -Milliseconds 20
+    }
+
+    if ($handoffDownSamples -lt 12) {
+        throw "Stable hold smoke failed. Expected A/S/W to remain down when Stop transferred to already-held physical keys; saw all three down in $handoffDownSamples of $handoffSamples samples."
+    }
+
+    [KeyHoldStableSmokeInput]::KeyUp($a)
+    [KeyHoldStableSmokeInput]::KeyUp($s)
+    [KeyHoldStableSmokeInput]::KeyUp($w)
+    Start-Sleep -Milliseconds 200
+
+    $anyStillDown = [KeyHoldStableSmokeInput]::IsDown($a) -or [KeyHoldStableSmokeInput]::IsDown($s) -or [KeyHoldStableSmokeInput]::IsDown($w)
+    if ($anyStillDown) {
+        throw 'Stable hold smoke failed. At least one handoff key was still down after physical release.'
+    }
+
+    [KeyHoldStableSmokeInput]::KeyDown($a)
+    [KeyHoldStableSmokeInput]::KeyDown($s)
+    [KeyHoldStableSmokeInput]::KeyDown($w)
+    Start-Sleep -Milliseconds 150
+    [KeyHoldStableSmokeInput]::KeyDown($pageUp)
+    Start-Sleep -Milliseconds 40
+    [KeyHoldStableSmokeInput]::KeyUp($pageUp)
+    Start-Sleep -Milliseconds 100
     [KeyHoldStableSmokeInput]::KeyUp($a)
     [KeyHoldStableSmokeInput]::KeyUp($s)
     [KeyHoldStableSmokeInput]::KeyUp($w)
@@ -143,7 +182,7 @@ try {
         throw 'Stable hold smoke failed. At least one held key was still down after Stop.'
     }
 
-    'KeyHold stable-hold smoke passed: A/S/W stayed down after physical release and released on Stop.'
+    'KeyHold stable-hold smoke passed: A/S/W transferred cleanly when physical keys stayed down, stayed down after physical release, and released on Stop.'
 }
 finally {
     [Environment]::SetEnvironmentVariable('KEYHOLD_ACCEPT_EXTERNAL_INJECTED_INPUT_FOR_SMOKE', $previousSmokeFlag, 'Process')

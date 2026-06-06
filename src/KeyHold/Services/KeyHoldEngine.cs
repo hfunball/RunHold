@@ -72,7 +72,7 @@ public sealed class KeyHoldEngine : IDisposable
             {
                 if (settings.EmergencyBinding.MatchesKeyboard(input.VirtualKey))
                 {
-                    ReleaseAllLocked("Emergency hotkey");
+                    ReleaseAllLocked("Emergency hotkey", allowPhysicalHandoff: false);
                     LogLocked($"Emergency release: {VirtualKeyNames.GetName(input.VirtualKey)}");
                     return settings.SuppressTriggerInput;
                 }
@@ -84,7 +84,7 @@ public sealed class KeyHoldEngine : IDisposable
                 }
                 else if (IsStopTrigger(input.VirtualKey))
                 {
-                    ReleaseAllLocked("Stop hotkey");
+                    ReleaseAllLocked("Stop hotkey", allowPhysicalHandoff: true);
                     suppress = settings.SuppressTriggerInput;
                 }
                 else
@@ -151,7 +151,7 @@ public sealed class KeyHoldEngine : IDisposable
     {
         lock (gate)
         {
-            ReleaseAllLocked(reason);
+            ReleaseAllLocked(reason, allowPhysicalHandoff: false);
         }
     }
 
@@ -164,7 +164,7 @@ public sealed class KeyHoldEngine : IDisposable
                 return;
             }
 
-            ReleaseAllLocked("Engine dispose");
+            ReleaseAllLocked("Engine dispose", allowPhysicalHandoff: false);
             StopRepeatTimerLocked();
             disposed = true;
         }
@@ -174,13 +174,13 @@ public sealed class KeyHoldEngine : IDisposable
     {
         if ((settings.ActivationMode == ActivationMode.Toggle || settings.ActivationMode == ActivationMode.MouseTrigger) && heldKeys.Count > 0)
         {
-            ReleaseAllLocked("Toggle release");
+            ReleaseAllLocked("Toggle release", allowPhysicalHandoff: true);
             return;
         }
 
         if (heldKeys.Count > 0)
         {
-            ReleaseAllLocked("New hold started");
+            ReleaseAllLocked("New hold started", allowPhysicalHandoff: true);
         }
 
         var snapshot = physicalKeysDown
@@ -206,7 +206,7 @@ public sealed class KeyHoldEngine : IDisposable
         LogLocked($"Holding {string.Join(", ", snapshot.Select(VirtualKeyNames.GetName))}.");
     }
 
-    private void ReleaseAllLocked(string reason)
+    private void ReleaseAllLocked(string reason, bool allowPhysicalHandoff)
     {
         StopRepeatTimerLocked();
         if (heldKeys.Count == 0)
@@ -215,14 +215,29 @@ public sealed class KeyHoldEngine : IDisposable
             return;
         }
 
+        var transferredKeys = new List<int>();
         foreach (var key in heldKeys.OrderByDescending(key => key).ToArray())
         {
+            if (allowPhysicalHandoff && physicalKeysDown.Contains(key))
+            {
+                inputSender.SendKeyDown(key);
+                transferredKeys.Add(key);
+                continue;
+            }
+
             inputSender.SendKeyUp(key);
         }
 
         heldKeys.Clear();
         PublishStatusLocked(reason);
-        LogLocked($"Released all keys: {reason}.");
+        if (transferredKeys.Count > 0)
+        {
+            LogLocked($"Released all keys: {reason}. Physical hold continued for {string.Join(", ", transferredKeys.Select(VirtualKeyNames.GetName))}.");
+        }
+        else
+        {
+            LogLocked($"Released all keys: {reason}.");
+        }
     }
 
     private void UpdateRepeatTimerLocked()
