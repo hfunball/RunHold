@@ -11,10 +11,20 @@ public sealed class ConfigService
         WriteIndented = true
     };
 
-    public string SettingsPath { get; } = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "KeyHold",
-        "settings.json");
+    public ConfigService()
+        : this(Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "KeyHold",
+            "settings.json"))
+    {
+    }
+
+    public ConfigService(string settingsPath)
+    {
+        SettingsPath = settingsPath;
+    }
+
+    public string SettingsPath { get; }
 
     public AppSettings Load()
     {
@@ -55,4 +65,3 @@ public sealed class ConfigService
         File.WriteAllText(SettingsPath, JsonSerializer.Serialize(settings, SerializerOptions));
     }
 }
-

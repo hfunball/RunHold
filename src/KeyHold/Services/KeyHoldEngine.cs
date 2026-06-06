@@ -114,6 +114,11 @@ public sealed class KeyHoldEngine
 
         lock (gate)
         {
+            if (uiCaptureActive)
+            {
+                return false;
+            }
+
             if (input.IsDown && settings.ActivationMode == ActivationMode.MouseTrigger)
             {
                 ActivateOrToggleLocked();
@@ -202,9 +207,18 @@ public sealed class KeyHoldEngine
 
     private bool IsAnyKeyboardTrigger(int virtualKey)
     {
-        return settings.EnableBinding.MatchesKeyboard(virtualKey)
-            || settings.StopBinding.MatchesKeyboard(virtualKey)
-            || settings.EmergencyBinding.MatchesKeyboard(virtualKey);
+        if (settings.EmergencyBinding.MatchesKeyboard(virtualKey))
+        {
+            return true;
+        }
+
+        return settings.ActivationMode switch
+        {
+            ActivationMode.SeparateKeys => settings.EnableBinding.MatchesKeyboard(virtualKey)
+                || settings.StopBinding.MatchesKeyboard(virtualKey),
+            ActivationMode.Toggle => settings.EnableBinding.MatchesKeyboard(virtualKey),
+            _ => false
+        };
     }
 
     private void PublishStatusLocked(string reason)

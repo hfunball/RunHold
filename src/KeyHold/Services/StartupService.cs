@@ -2,7 +2,14 @@ using Microsoft.Win32;
 
 namespace KeyHold.Services;
 
-public sealed class StartupService
+public interface IStartupService
+{
+    bool IsEnabled();
+
+    void SetEnabled(bool enabled);
+}
+
+public sealed class StartupService : IStartupService
 {
     private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
     private const string ValueName = "KeyHold";
@@ -36,4 +43,3 @@ public sealed class StartupService
         key.SetValue(ValueName, $"\"{executablePath}\"");
     }
 }
-

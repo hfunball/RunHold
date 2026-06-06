@@ -62,6 +62,20 @@ public sealed class KeyHoldEngineTests
     }
 
     [TestMethod]
+    public void ToggleMode_CanHoldSeparateModeStopKey()
+    {
+        var sender = new RecordingInputSender();
+        var settings = new AppSettings { ActivationMode = ActivationMode.Toggle };
+        var engine = new KeyHoldEngine(settings, sender);
+
+        engine.HandleKeyboardEvent(Down(PageDown));
+        engine.HandleKeyboardEvent(Down(PageUp));
+
+        CollectionAssert.Contains(sender.DownKeys, PageDown);
+        Assert.IsTrue(engine.Status.IsActive);
+    }
+
+    [TestMethod]
     public void MouseTriggerMode_MouseButtonStartsAndStopsHold()
     {
         var sender = new RecordingInputSender();
@@ -76,6 +90,22 @@ public sealed class KeyHoldEngineTests
 
         CollectionAssert.Contains(sender.UpKeys, W);
         Assert.IsFalse(engine.Status.IsActive);
+    }
+
+    [TestMethod]
+    public void MouseTriggerMode_CanHoldKeyboardTriggerDefaults()
+    {
+        var sender = new RecordingInputSender();
+        var settings = new AppSettings { ActivationMode = ActivationMode.MouseTrigger };
+        var engine = new KeyHoldEngine(settings, sender);
+
+        engine.HandleKeyboardEvent(Down(PageUp));
+        engine.HandleKeyboardEvent(Down(PageDown));
+        engine.HandleMouseEvent(new MouseInputEvent(MouseTriggerCode.XButton1, true, false));
+
+        CollectionAssert.Contains(sender.DownKeys, PageUp);
+        CollectionAssert.Contains(sender.DownKeys, PageDown);
+        Assert.IsTrue(engine.Status.IsActive);
     }
 
     [TestMethod]

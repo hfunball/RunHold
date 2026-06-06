@@ -1,13 +1,16 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using KeyHold.Models;
 using KeyHold.Services;
 using AppInputBinding = KeyHold.Models.InputBinding;
 using AppThemeMode = KeyHold.Models.ThemeMode;
+using WpfButton = System.Windows.Controls.Button;
 using WpfComboBox = System.Windows.Controls.ComboBox;
 using WpfComboBoxItem = System.Windows.Controls.ComboBoxItem;
 using WpfKeyEventArgs = System.Windows.Input.KeyEventArgs;
+using WpfTextBox = System.Windows.Controls.TextBox;
 
 namespace KeyHold;
 
@@ -15,14 +18,14 @@ public partial class MainWindow
 {
     private readonly ConfigService configService;
     private readonly KeyHoldEngine engine;
-    private readonly StartupService startupService;
+    private readonly IStartupService startupService;
     private AppSettings settings;
     private BindingTarget? captureTarget;
     private bool isLoading;
     private bool allowClose;
     private bool startupEnabled;
 
-    public MainWindow(AppSettings settings, ConfigService configService, KeyHoldEngine engine, StartupService startupService)
+    public MainWindow(AppSettings settings, ConfigService configService, KeyHoldEngine engine, IStartupService startupService)
     {
         InitializeComponent();
         this.settings = settings;
@@ -37,7 +40,7 @@ public partial class MainWindow
     public void UpdateStatus(HoldStatus status)
     {
         StatusText.Text = status.IsActive ? "Holding" : "Idle";
-        StatusPill.Background = (System.Windows.Media.Brush)FindResource(status.IsActive ? "AccentBrush" : "BorderBrush");
+        StatusPill.Background = FindBrush(status.IsActive ? "AccentBrush" : "BorderBrush");
         HeldKeysText.Text = status.IsActive
             ? $"Holding: {string.Join(", ", status.HeldKeys.Select(VirtualKeyNames.GetName))}"
             : "No keys held by KeyHold.";
@@ -79,9 +82,7 @@ public partial class MainWindow
             return;
         }
 
-        captureTarget = null;
-        engine.SetUiCaptureActive(false);
-        AddDiagnostic(new DiagnosticEntry(DateTime.Now, "Key capture canceled."));
+        CancelCapture("Key capture canceled.");
     }
 
     protected override void OnPreviewKeyDown(WpfKeyEventArgs e)
@@ -94,25 +95,7 @@ public partial class MainWindow
         }
 
         e.Handled = true;
-        var binding = AppInputBinding.Keyboard(KeyInterop.VirtualKeyFromKey(e.Key == Key.System ? e.SystemKey : e.Key));
-
-        switch (captureTarget)
-        {
-            case BindingTarget.Enable:
-                settings.EnableBinding = binding;
-                break;
-            case BindingTarget.Stop:
-                settings.StopBinding = binding;
-                break;
-            case BindingTarget.Emergency:
-                settings.EmergencyBinding = binding;
-                break;
-        }
-
-        captureTarget = null;
-        engine.SetUiCaptureActive(false);
-        SaveSettingsFromUi();
-        LoadSettingsToUi();
+        CompleteKeyCapture(KeyInterop.VirtualKeyFromKey(e.Key == Key.System ? e.SystemKey : e.Key));
     }
 
     private void LoadSettingsToUi()
@@ -130,6 +113,7 @@ public partial class MainWindow
         LaunchToTrayBox.IsChecked = settings.LaunchToTray;
         NotificationsBox.IsChecked = settings.ShowNotifications;
         isLoading = false;
+        UpdateBindingUi();
     }
 
     private void SaveSettingsFromUi()
@@ -160,6 +144,7 @@ public partial class MainWindow
             TryApplyStartupSetting(StartupBox.IsChecked == true);
             engine.UpdateSettings(settings);
             ThemeService.Apply(settings.Theme);
+            UpdateBindingUi();
         }
         catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or InvalidOperationException)
         {
@@ -190,6 +175,12 @@ public partial class MainWindow
 
         tag = selectedTag;
         return true;
+    }
+
+    private System.Windows.Media.Brush FindBrush(string resourceKey)
+    {
+        return TryFindResource(resourceKey) as System.Windows.Media.Brush
+            ?? System.Windows.Media.Brushes.Transparent;
     }
 
     private bool TryReadStartupEnabled()
@@ -253,11 +244,120 @@ public partial class MainWindow
 
     private void BeginCapture(BindingTarget target)
     {
+        if (!IsCaptureTargetAvailable(target))
+        {
+            return;
+        }
+
         captureTarget = target;
         engine.SetUiCaptureActive(true);
-        AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Press a key to set {target}."));
+        UpdateBindingUi();
+        AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Press a key to set {GetBindingTargetName(target).ToLowerInvariant()}."));
         Activate();
-        Focus();
+        Dispatcher.InvokeAsync(() =>
+        {
+            var targetBox = GetBindingTextBox(target);
+            targetBox.Focus();
+            Keyboard.Focus(targetBox);
+        }, DispatcherPriority.Input);
+    }
+
+    internal void CompleteKeyCaptureForTest(int virtualKey)
+    {
+        CompleteKeyCapture(virtualKey);
+    }
+
+    private void CompleteKeyCapture(int virtualKey)
+    {
+        if (captureTarget is not { } target || virtualKey == 0)
+        {
+            return;
+        }
+
+        var binding = AppInputBinding.Keyboard(virtualKey);
+        switch (target)
+        {
+            case BindingTarget.Enable:
+                settings.EnableBinding = binding;
+                break;
+            case BindingTarget.Stop:
+                settings.StopBinding = binding;
+                break;
+            case BindingTarget.Emergency:
+                settings.EmergencyBinding = binding;
+                break;
+        }
+
+        captureTarget = null;
+        engine.SetUiCaptureActive(false);
+        SaveSettingsFromUi();
+        LoadSettingsToUi();
+        AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Set {GetBindingTargetName(target).ToLowerInvariant()} to {binding.DisplayName}."));
+    }
+
+    private void CancelCapture(string message)
+    {
+        captureTarget = null;
+        engine.SetUiCaptureActive(false);
+        UpdateBindingUi();
+        AddDiagnostic(new DiagnosticEntry(DateTime.Now, message));
+    }
+
+    private void UpdateBindingUi()
+    {
+        var isToggle = settings.ActivationMode == ActivationMode.Toggle;
+        var isSeparateKeys = settings.ActivationMode == ActivationMode.SeparateKeys;
+        var isMouseTrigger = settings.ActivationMode == ActivationMode.MouseTrigger;
+
+        EnableBindingPanel.Visibility = isMouseTrigger ? Visibility.Collapsed : Visibility.Visible;
+        StopBindingPanel.Visibility = isSeparateKeys ? Visibility.Visible : Visibility.Collapsed;
+        MouseBindingPanel.Visibility = isMouseTrigger ? Visibility.Visible : Visibility.Collapsed;
+
+        EnableBindingLabel.Text = isToggle ? "Toggle key" : "Enable key";
+        SetCaptureControlState(BindingTarget.Enable, EnableBindingText, CaptureEnableButton, settings.EnableBinding.DisplayName);
+        SetCaptureControlState(BindingTarget.Stop, StopBindingText, CaptureStopButton, settings.StopBinding.DisplayName);
+        SetCaptureControlState(BindingTarget.Emergency, EmergencyBindingText, CaptureEmergencyButton, settings.EmergencyBinding.DisplayName);
+    }
+
+    private void SetCaptureControlState(BindingTarget target, WpfTextBox textBox, WpfButton button, string bindingName)
+    {
+        var isCapturing = captureTarget == target;
+        textBox.Text = isCapturing ? "Press a key..." : bindingName;
+        button.Content = isCapturing ? "Listening..." : $"Set {GetBindingTargetName(target)}";
+    }
+
+    private string GetBindingTargetName(BindingTarget target)
+    {
+        return target switch
+        {
+            BindingTarget.Enable when settings.ActivationMode == ActivationMode.Toggle => "Toggle Key",
+            BindingTarget.Enable => "Enable Key",
+            BindingTarget.Stop => "Stop Key",
+            BindingTarget.Emergency => "Emergency Key",
+            _ => "Key"
+        };
+    }
+
+    private bool IsCaptureTargetAvailable(BindingTarget target)
+    {
+        return target switch
+        {
+            BindingTarget.Enable => settings.ActivationMode != ActivationMode.MouseTrigger,
+            BindingTarget.Stop => settings.ActivationMode == ActivationMode.SeparateKeys,
+            BindingTarget.Emergency => true,
+            _ => false
+        };
+    }
+
+    private WpfTextBox GetBindingTextBox(BindingTarget target)
+    {
+        return target switch
+        {
+            BindingTarget.Enable => EnableBindingText,
+            BindingTarget.Stop => StopBindingText,
+            BindingTarget.Emergency => EmergencyBindingText,
+            _ => EnableBindingText
+        };
     }
 
     private void SettingChanged(object sender, RoutedEventArgs e)

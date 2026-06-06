@@ -8,23 +8,55 @@
         MinHeight="500"
         Background="{DynamicResource AppBackgroundBrush}"
         Foreground="{DynamicResource TextBrush}"
+        Focusable="True"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="MinHeight" Value="34" />
             <Setter Property="Padding" Value="14,6" />
             <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="Background" Value="{DynamicResource PanelBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="MinHeight" Value="32" />
             <Setter Property="Margin" Value="0,6,0,0" />
+            <Setter Property="Background" Value="#1D232C" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource TextBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         </Style>
         <Style TargetType="ComboBox">
             <Setter Property="MinHeight" Value="32" />
             <Setter Property="Margin" Value="0,6,0,0" />
+            <Setter Property="Background" Value="#1D232C" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        </Style>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="{DynamicResource PanelBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         </Style>
         <Style TargetType="CheckBox">
             <Setter Property="Margin" Value="0,8,0,0" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="{DynamicResource PanelBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        </Style>
+        <Style TargetType="TabControl">
+            <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="Background" Value="{DynamicResource PanelBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="Padding" Value="12,6" />
         </Style>
     </Window.Resources>
 
@@ -63,9 +95,12 @@
             </Grid>
         </Border>
 
-        <TabControl Grid.Row="1" Margin="0,16,0,16">
+        <TabControl Grid.Row="1"
+                    Margin="0,16,0,16"
+                    Background="{DynamicResource AppBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}">
             <TabItem Header="Status">
-                <Grid Margin="14">
+                <Grid Margin="14" Background="{DynamicResource AppBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -84,7 +119,7 @@
             </TabItem>
 
             <TabItem Header="Bindings">
-                <Grid Margin="14">
+                <Grid Margin="14" Background="{DynamicResource AppBackgroundBrush}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -105,25 +140,46 @@
                         </ComboBox>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,16,10,0">
-                        <TextBlock Text="Enable key" FontWeight="SemiBold" />
-                        <TextBox x:Name="EnableBindingText" IsReadOnly="True" />
-                        <Button Content="Capture Enable Key" Margin="0,8,8,0" Click="CaptureEnable_Click" />
+                    <StackPanel Grid.Row="1"
+                                Grid.Column="0"
+                                x:Name="EnableBindingPanel"
+                                Margin="0,16,10,0">
+                        <TextBlock x:Name="EnableBindingLabel" Text="Enable key" FontWeight="SemiBold" />
+                        <TextBox x:Name="EnableBindingText" IsReadOnly="True" Focusable="True" />
+                        <Button x:Name="CaptureEnableButton"
+                                Content="Set Enable Key"
+                                Margin="0,8,8,0"
+                                Click="CaptureEnable_Click" />
                     </StackPanel>
 
-                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,16,0,0">
+                    <StackPanel Grid.Row="1"
+                                Grid.Column="1"
+                                x:Name="StopBindingPanel"
+                                Margin="10,16,0,0">
                         <TextBlock Text="Stop key" FontWeight="SemiBold" />
-                        <TextBox x:Name="StopBindingText" IsReadOnly="True" />
-                        <Button Content="Capture Stop Key" Margin="0,8,8,0" Click="CaptureStop_Click" />
+                        <TextBox x:Name="StopBindingText" IsReadOnly="True" Focusable="True" />
+                        <Button x:Name="CaptureStopButton"
+                                Content="Set Stop Key"
+                                Margin="0,8,8,0"
+                                Click="CaptureStop_Click" />
                     </StackPanel>
 
-                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,16,10,0">
+                    <StackPanel Grid.Row="2"
+                                Grid.Column="0"
+                                x:Name="EmergencyBindingPanel"
+                                Margin="0,16,10,0">
                         <TextBlock Text="Emergency key" FontWeight="SemiBold" />
-                        <TextBox x:Name="EmergencyBindingText" IsReadOnly="True" />
-                        <Button Content="Capture Emergency Key" Margin="0,8,8,0" Click="CaptureEmergency_Click" />
+                        <TextBox x:Name="EmergencyBindingText" IsReadOnly="True" Focusable="True" />
+                        <Button x:Name="CaptureEmergencyButton"
+                                Content="Set Emergency Key"
+                                Margin="0,8,8,0"
+                                Click="CaptureEmergency_Click" />
                     </StackPanel>
 
-                    <StackPanel Grid.Row="2" Grid.Column="1" Margin="10,16,0,0">
+                    <StackPanel Grid.Row="2"
+                                Grid.Column="1"
+                                x:Name="MouseBindingPanel"
+                                Margin="10,16,0,0">
                         <TextBlock Text="Mouse trigger" FontWeight="SemiBold" />
                         <ComboBox x:Name="MouseBindingBox" SelectionChanged="SettingChanged">
                             <ComboBoxItem Content="Mouse Button 4" Tag="XButton1" />
@@ -142,7 +198,7 @@
             </TabItem>
 
             <TabItem Header="Settings">
-                <StackPanel Margin="14">
+                <StackPanel Margin="14" Background="{DynamicResource AppBackgroundBrush}">
                     <TextBlock Text="Theme" FontWeight="SemiBold" />
                     <ComboBox x:Name="ThemeBox" SelectionChanged="SettingChanged">
                         <ComboBoxItem Content="Dark" Tag="Dark" />
@@ -165,7 +221,7 @@
             </TabItem>
 
             <TabItem Header="History">
-                <Grid Margin="14">
+                <Grid Margin="14" Background="{DynamicResource AppBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
