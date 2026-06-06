@@ -195,34 +195,43 @@ public sealed class KeyHoldEngineTests
     }
 
     [TestMethod]
-    public void StableHold_StopTransfersKeysBackToPhysicalHold()
+    public void StableHold_HeldKeyTapCancelsWithPhysicalHandoff()
     {
         var sender = new RecordingInputSender();
         using var engine = CreateEngine(new AppSettings(), sender);
 
         engine.HandleKeyboardEvent(Down(W));
-        engine.HandleKeyboardEvent(Down(Space));
         engine.HandleKeyboardEvent(Down(Home));
 
         Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
-        Assert.IsTrue(engine.HandleKeyboardEvent(Up(Space)));
         Assert.AreEqual(2, sender.DownCount(W));
-        Assert.AreEqual(2, sender.DownCount(Space));
 
         Assert.IsFalse(engine.HandleKeyboardEvent(Down(W)));
-        Assert.IsFalse(engine.HandleKeyboardEvent(Down(Space)));
-        Assert.IsTrue(engine.HandleKeyboardEvent(Down(Home)));
 
         Assert.AreEqual(3, sender.DownCount(W));
-        Assert.AreEqual(3, sender.DownCount(Space));
         Assert.AreEqual(0, sender.UpCount(W));
-        Assert.AreEqual(0, sender.UpCount(Space));
         Assert.IsFalse(engine.Status.IsActive);
 
         Assert.IsFalse(engine.HandleKeyboardEvent(Up(W)));
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(Space)));
         Assert.AreEqual(0, sender.UpCount(W));
-        Assert.AreEqual(0, sender.UpCount(Space));
+    }
+
+    [TestMethod]
+    public void StableHold_NonHeldKeyPressCancelsAndReleasesHeldKeys()
+    {
+        var sender = new RecordingInputSender();
+        using var engine = CreateEngine(new AppSettings(), sender);
+
+        engine.HandleKeyboardEvent(Down(W));
+        engine.HandleKeyboardEvent(Down(Home));
+
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.AreEqual(2, sender.DownCount(W));
+
+        Assert.IsFalse(engine.HandleKeyboardEvent(Down(A)));
+
+        CollectionAssert.Contains(sender.UpKeys, W);
+        Assert.IsFalse(engine.Status.IsActive);
     }
 
     [TestMethod]

@@ -18,7 +18,13 @@ public sealed class SendInputService : IInputSender
     public void SendKeyUp(int virtualKey)
     {
         SendKey(virtualKey, KeyEventFKeyUp);
-        keybd_event((byte)virtualKey, 0, KeyEventFKeyUp, InputInjectionMarker.KeyHoldInput);
+        SendVirtualKey(virtualKey, KeyEventFKeyUp);
+        var scanCode = (byte)(MapVirtualKey((uint)virtualKey, MapVkToVsc) & 0xFF);
+        keybd_event(
+            (byte)virtualKey,
+            scanCode,
+            KeyEventFKeyUp | (IsExtendedKey(virtualKey) ? KeyEventFExtendedKey : 0),
+            InputInjectionMarker.KeyHoldInput);
     }
 
     private static void SendKey(int virtualKey, uint flags)
@@ -47,6 +53,29 @@ public sealed class SendInputService : IInputSender
         if (SendInput(1, [input], Marshal.SizeOf<NativeInput>()) == 0)
         {
             keybd_event((byte)virtualKey, 0, flags, InputInjectionMarker.KeyHoldInput);
+        }
+    }
+
+    private static void SendVirtualKey(int virtualKey, uint flags)
+    {
+        var nativeFlags = flags | (IsExtendedKey(virtualKey) ? KeyEventFExtendedKey : 0);
+        var input = new NativeInput
+        {
+            Type = InputKeyboard,
+            Data = new NativeInputUnion
+            {
+                Keyboard = new KeyboardInput
+                {
+                    VirtualKey = (ushort)virtualKey,
+                    Flags = nativeFlags,
+                    ExtraInfo = InputInjectionMarker.KeyHoldInput
+                }
+            }
+        };
+
+        if (SendInput(1, [input], Marshal.SizeOf<NativeInput>()) == 0)
+        {
+            keybd_event((byte)virtualKey, 0, nativeFlags, InputInjectionMarker.KeyHoldInput);
         }
     }
 

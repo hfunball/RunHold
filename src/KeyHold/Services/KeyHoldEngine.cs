@@ -92,18 +92,7 @@ public sealed class KeyHoldEngine : IDisposable
                 else
                 {
                     physicalKeysDown.Add(input.VirtualKey);
-                    if (heldKeys.Contains(input.VirtualKey))
-                    {
-                        if (releasedHeldKeys.Contains(input.VirtualKey))
-                        {
-                            handoffReadyKeys.Add(input.VirtualKey);
-                            suppress = false;
-                        }
-                        else
-                        {
-                            suppress = true;
-                        }
-                    }
+                    suppress = HandleActiveKeyDownLocked(input.VirtualKey);
                 }
             }
             else
@@ -218,6 +207,29 @@ public sealed class KeyHoldEngine : IDisposable
         UpdateRepeatTimerLocked();
         PublishStatusLocked("Hold active");
         LogLocked($"Holding {string.Join(", ", snapshot.Select(VirtualKeyNames.GetName))}.");
+    }
+
+    private bool HandleActiveKeyDownLocked(int virtualKey)
+    {
+        if (heldKeys.Count == 0)
+        {
+            return false;
+        }
+
+        if (!heldKeys.Contains(virtualKey))
+        {
+            ReleaseAllLocked($"Canceled by {VirtualKeyNames.GetName(virtualKey)}", allowPhysicalHandoff: false);
+            return false;
+        }
+
+        if (!releasedHeldKeys.Contains(virtualKey))
+        {
+            return true;
+        }
+
+        handoffReadyKeys.Add(virtualKey);
+        ReleaseAllLocked($"Physical key takeover: {VirtualKeyNames.GetName(virtualKey)}", allowPhysicalHandoff: true);
+        return false;
     }
 
     private void ReleaseAllLocked(string reason, bool allowPhysicalHandoff)
