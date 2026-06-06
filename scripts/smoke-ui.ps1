@@ -109,18 +109,27 @@ function Assert-DarkControlInterior {
     Add-Type -AssemblyName System.Drawing
 
     $rect = $Control.Current.BoundingRectangle
-    $sampleX = [int]($rect.Right - [Math]::Min(80, [Math]::Max(20, $rect.Width / 4)))
-    $sampleY = [int]($rect.Top + ($rect.Height / 2))
-    $bitmap = New-Object System.Drawing.Bitmap 1, 1
+    $sampleWidth = [Math]::Max(1, [int]$rect.Width)
+    $sampleHeight = [Math]::Max(1, [int]$rect.Height)
+    $bitmap = New-Object System.Drawing.Bitmap $sampleWidth, $sampleHeight
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
 
     try {
-        $graphics.CopyFromScreen($sampleX, $sampleY, 0, 0, $bitmap.Size)
-        $color = $bitmap.GetPixel(0, 0)
-        $luminance = (0.2126 * $color.R) + (0.7152 * $color.G) + (0.0722 * $color.B)
+        $graphics.CopyFromScreen([int]$rect.Left, [int]$rect.Top, 0, 0, $bitmap.Size)
+        $luminanceSamples = @()
+        foreach ($xRatio in @(0.18, 0.38, 0.62, 0.82)) {
+            foreach ($yRatio in @(0.35, 0.62, 0.82)) {
+                $x = [Math]::Min($bitmap.Width - 1, [Math]::Max(0, [int]($bitmap.Width * $xRatio)))
+                $y = [Math]::Min($bitmap.Height - 1, [Math]::Max(0, [int]($bitmap.Height * $yRatio)))
+                $color = $bitmap.GetPixel($x, $y)
+                $luminanceSamples += (0.2126 * $color.R) + (0.7152 * $color.G) + (0.0722 * $color.B)
+            }
+        }
 
-        if ($luminance -gt 130) {
-            throw "$Description is still too bright to read in dark mode. Sample RGB: $($color.R), $($color.G), $($color.B)."
+        $ordered = @($luminanceSamples | Sort-Object)
+        $medianLuminance = $ordered[[int]($ordered.Count / 2)]
+        if ($medianLuminance -gt 130) {
+            throw "$Description is still too bright to read in dark mode. Median luminance: $([Math]::Round($medianLuminance, 1))."
         }
     }
     finally {
@@ -175,6 +184,7 @@ try {
     $bindingsTab = Wait-For { Find-ByName -Root $window -Name 'Bindings' } 'the Bindings tab'
     $selection = $bindingsTab.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
     $selection.Select()
+    Assert-DarkControlInterior -Control $bindingsTab -Description 'Selected Bindings tab'
 
     $activationModeBox = Wait-For {
         $comboBoxes = Get-ComboBoxes -Root $window

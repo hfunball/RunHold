@@ -77,6 +77,7 @@ public partial class App
     protected override void OnExit(ExitEventArgs e)
     {
         engine?.ReleaseAll("Application exit");
+        engine?.Dispose();
         keyboardHook?.Dispose();
         mouseHook?.Dispose();
         notifyIconHost?.Dispose();

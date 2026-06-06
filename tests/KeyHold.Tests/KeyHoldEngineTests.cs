@@ -17,7 +17,7 @@ public sealed class KeyHoldEngineTests
     public void SeparateKeys_CapturesHeldKeysAndSuppressesTheirRelease()
     {
         var sender = new RecordingInputSender();
-        var engine = new KeyHoldEngine(new AppSettings(), sender);
+        using var engine = CreateEngine(new AppSettings(), sender);
 
         Assert.IsFalse(engine.HandleKeyboardEvent(Down(W)));
         Assert.IsFalse(engine.HandleKeyboardEvent(Down(Shift)));
@@ -34,7 +34,7 @@ public sealed class KeyHoldEngineTests
     public void SeparateKeys_StopKeyReleasesHeldKeys()
     {
         var sender = new RecordingInputSender();
-        var engine = new KeyHoldEngine(new AppSettings(), sender);
+        using var engine = CreateEngine(new AppSettings(), sender);
 
         engine.HandleKeyboardEvent(Down(W));
         engine.HandleKeyboardEvent(Down(PageUp));
@@ -49,7 +49,7 @@ public sealed class KeyHoldEngineTests
     {
         var sender = new RecordingInputSender();
         var settings = new AppSettings { ActivationMode = ActivationMode.Toggle };
-        var engine = new KeyHoldEngine(settings, sender);
+        using var engine = CreateEngine(settings, sender);
 
         engine.HandleKeyboardEvent(Down(W));
         engine.HandleKeyboardEvent(Down(PageUp));
@@ -66,7 +66,7 @@ public sealed class KeyHoldEngineTests
     {
         var sender = new RecordingInputSender();
         var settings = new AppSettings { ActivationMode = ActivationMode.Toggle };
-        var engine = new KeyHoldEngine(settings, sender);
+        using var engine = CreateEngine(settings, sender);
 
         engine.HandleKeyboardEvent(Down(PageDown));
         engine.HandleKeyboardEvent(Down(PageUp));
@@ -80,7 +80,7 @@ public sealed class KeyHoldEngineTests
     {
         var sender = new RecordingInputSender();
         var settings = new AppSettings { ActivationMode = ActivationMode.MouseTrigger };
-        var engine = new KeyHoldEngine(settings, sender);
+        using var engine = CreateEngine(settings, sender);
 
         engine.HandleKeyboardEvent(Down(W));
         Assert.IsTrue(engine.HandleMouseEvent(new MouseInputEvent(MouseTriggerCode.XButton1, true, false)));
@@ -97,7 +97,7 @@ public sealed class KeyHoldEngineTests
     {
         var sender = new RecordingInputSender();
         var settings = new AppSettings { ActivationMode = ActivationMode.MouseTrigger };
-        var engine = new KeyHoldEngine(settings, sender);
+        using var engine = CreateEngine(settings, sender);
 
         engine.HandleKeyboardEvent(Down(PageUp));
         engine.HandleKeyboardEvent(Down(PageDown));
@@ -112,7 +112,7 @@ public sealed class KeyHoldEngineTests
     public void EmergencyHotkeyReleasesHeldKeys()
     {
         var sender = new RecordingInputSender();
-        var engine = new KeyHoldEngine(new AppSettings(), sender);
+        using var engine = CreateEngine(new AppSettings(), sender);
 
         engine.HandleKeyboardEvent(Down(W));
         engine.HandleKeyboardEvent(Down(PageUp));
@@ -120,6 +120,28 @@ public sealed class KeyHoldEngineTests
 
         Assert.IsTrue(engine.HandleKeyboardEvent(Down(F12)));
 
+        CollectionAssert.Contains(sender.UpKeys, W);
+        Assert.IsFalse(engine.Status.IsActive);
+    }
+
+    [TestMethod]
+    public void ActiveHold_RepeatsHeldKeysUntilStop()
+    {
+        var sender = new RecordingInputSender();
+        using var engine = new KeyHoldEngine(new AppSettings(), sender, TimeSpan.FromMilliseconds(10));
+
+        engine.HandleKeyboardEvent(Down(W));
+        engine.HandleKeyboardEvent(Down(PageUp));
+
+        Assert.IsTrue(WaitUntil(() => sender.DownCount(W) >= 3));
+
+        Assert.IsTrue(engine.HandleKeyboardEvent(Down(W)));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Down(PageDown)));
+
+        var downCountAfterStop = sender.DownCount(W);
+        Thread.Sleep(40);
+
+        Assert.AreEqual(downCountAfterStop, sender.DownCount(W));
         CollectionAssert.Contains(sender.UpKeys, W);
         Assert.IsFalse(engine.Status.IsActive);
     }
@@ -134,20 +156,77 @@ public sealed class KeyHoldEngineTests
         return new KeyboardInputEvent(key, false, false, false);
     }
 
+    private static KeyHoldEngine CreateEngine(AppSettings settings, RecordingInputSender sender)
+    {
+        return new KeyHoldEngine(settings, sender, TimeSpan.FromSeconds(10));
+    }
+
+    private static bool WaitUntil(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(1);
+        while (DateTime.UtcNow < deadline)
+        {
+            if (condition())
+            {
+                return true;
+            }
+
+            Thread.Sleep(10);
+        }
+
+        return false;
+    }
+
     private sealed class RecordingInputSender : IInputSender
     {
-        public List<int> DownKeys { get; } = [];
+        private readonly object gate = new();
+        private readonly List<int> downKeys = [];
+        private readonly List<int> upKeys = [];
 
-        public List<int> UpKeys { get; } = [];
+        public int[] DownKeys
+        {
+            get
+            {
+                lock (gate)
+                {
+                    return [.. downKeys];
+                }
+            }
+        }
+
+        public int[] UpKeys
+        {
+            get
+            {
+                lock (gate)
+                {
+                    return [.. upKeys];
+                }
+            }
+        }
 
         public void SendKeyDown(int virtualKey)
         {
-            DownKeys.Add(virtualKey);
+            lock (gate)
+            {
+                downKeys.Add(virtualKey);
+            }
         }
 
         public void SendKeyUp(int virtualKey)
         {
-            UpKeys.Add(virtualKey);
+            lock (gate)
+            {
+                upKeys.Add(virtualKey);
+            }
+        }
+
+        public int DownCount(int virtualKey)
+        {
+            lock (gate)
+            {
+                return downKeys.Count(key => key == virtualKey);
+            }
         }
     }
 }

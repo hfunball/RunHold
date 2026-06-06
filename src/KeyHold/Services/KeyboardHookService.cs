@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using KeyHold.Models;
 
@@ -31,10 +30,11 @@ public sealed class KeyboardHookService : IDisposable
             return;
         }
 
-        using var currentProcess = Process.GetCurrentProcess();
-        var currentModule = currentProcess.MainModule;
-        var moduleHandle = currentModule is null ? IntPtr.Zero : GetModuleHandle(currentModule.ModuleName);
-        hookId = SetWindowsHookEx(WhKeyboardLl, callback, moduleHandle, 0);
+        hookId = SetWindowsHookEx(WhKeyboardLl, callback, IntPtr.Zero, 0);
+        if (hookId == IntPtr.Zero)
+        {
+            engine.LogDiagnostic($"Keyboard hook failed to start. Win32 error: {Marshal.GetLastWin32Error()}.");
+        }
     }
 
     public void Dispose()
@@ -65,10 +65,16 @@ public sealed class KeyboardHookService : IDisposable
         }
 
         var data = Marshal.PtrToStructure<KbdLlHookStruct>(lParam);
+        var isInjected = (data.Flags & LlkhfInjected) == LlkhfInjected;
+        var isKeyHoldInjected = data.ExtraInfo == InputInjectionMarker.KeyHoldInput;
+        var acceptExternalInjectedInput = string.Equals(
+            Environment.GetEnvironmentVariable(InputInjectionMarker.AcceptExternalInjectedInputEnvironmentVariable),
+            "1",
+            StringComparison.Ordinal);
         var input = new KeyboardInputEvent(
             data.VirtualKey,
             isDown,
-            (data.Flags & LlkhfInjected) == LlkhfInjected,
+            isInjected && (isKeyHoldInjected || !acceptExternalInjectedInput),
             (data.Flags & LlkhfAltdown) == LlkhfAltdown);
 
         return engine.HandleKeyboardEvent(input)
@@ -87,9 +93,6 @@ public sealed class KeyboardHookService : IDisposable
 
     [DllImport("user32.dll")]
     private static extern IntPtr CallNextHookEx(IntPtr hook, int code, IntPtr wParam, IntPtr lParam);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern IntPtr GetModuleHandle(string? moduleName);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct KbdLlHookStruct

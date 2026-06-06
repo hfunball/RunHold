@@ -2,19 +2,30 @@ using KeyHold.Models;
 
 namespace KeyHold.Services;
 
-public sealed class KeyHoldEngine
+public sealed class KeyHoldEngine : IDisposable
 {
+    private static readonly TimeSpan DefaultRepeatInterval = TimeSpan.FromMilliseconds(45);
+
     private readonly object gate = new();
     private readonly IInputSender inputSender;
+    private readonly TimeSpan repeatInterval;
     private readonly HashSet<int> physicalKeysDown = [];
     private readonly HashSet<int> heldKeys = [];
     private AppSettings settings;
+    private System.Threading.Timer? repeatTimer;
+    private bool disposed;
     private bool uiCaptureActive;
 
     public KeyHoldEngine(AppSettings settings, IInputSender inputSender)
+        : this(settings, inputSender, DefaultRepeatInterval)
+    {
+    }
+
+    internal KeyHoldEngine(AppSettings settings, IInputSender inputSender, TimeSpan repeatInterval)
     {
         this.settings = settings;
         this.inputSender = inputSender;
+        this.repeatInterval = repeatInterval;
         Status = new HoldStatus(false, Array.Empty<int>(), "Idle");
     }
 
@@ -40,6 +51,11 @@ public sealed class KeyHoldEngine
         {
             uiCaptureActive = isActive;
         }
+    }
+
+    public void LogDiagnostic(string message)
+    {
+        Log(message);
     }
 
     public bool HandleKeyboardEvent(KeyboardInputEvent input)
@@ -80,6 +96,10 @@ public sealed class KeyHoldEngine
                 else
                 {
                     physicalKeysDown.Add(input.VirtualKey);
+                    if (heldKeys.Contains(input.VirtualKey))
+                    {
+                        suppress = true;
+                    }
                 }
             }
             else
@@ -137,6 +157,21 @@ public sealed class KeyHoldEngine
         }
     }
 
+    public void Dispose()
+    {
+        lock (gate)
+        {
+            if (disposed)
+            {
+                return;
+            }
+
+            ReleaseAllLocked("Engine dispose");
+            StopRepeatTimerLocked();
+            disposed = true;
+        }
+    }
+
     private void ActivateOrToggleLocked()
     {
         if ((settings.ActivationMode == ActivationMode.Toggle || settings.ActivationMode == ActivationMode.MouseTrigger) && heldKeys.Count > 0)
@@ -168,12 +203,14 @@ public sealed class KeyHoldEngine
             heldKeys.Add(key);
         }
 
+        StartRepeatTimerLocked();
         PublishStatusLocked("Hold active");
         LogLocked($"Holding {string.Join(", ", snapshot.Select(VirtualKeyNames.GetName))}.");
     }
 
     private void ReleaseAllLocked(string reason)
     {
+        StopRepeatTimerLocked();
         if (heldKeys.Count == 0)
         {
             PublishStatusLocked(reason);
@@ -188,6 +225,34 @@ public sealed class KeyHoldEngine
         heldKeys.Clear();
         PublishStatusLocked(reason);
         LogLocked($"Released all keys: {reason}.");
+    }
+
+    private void StartRepeatTimerLocked()
+    {
+        repeatTimer ??= new System.Threading.Timer(_ => RepeatHeldKeys(), null, repeatInterval, repeatInterval);
+    }
+
+    private void StopRepeatTimerLocked()
+    {
+        repeatTimer?.Dispose();
+        repeatTimer = null;
+    }
+
+    private void RepeatHeldKeys()
+    {
+        lock (gate)
+        {
+            if (disposed || heldKeys.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var key in heldKeys.OrderBy(key => key))
+            {
+                inputSender.SendKeyUp(key);
+                inputSender.SendKeyDown(key);
+            }
+        }
     }
 
     private bool IsEnableTrigger(int virtualKey)

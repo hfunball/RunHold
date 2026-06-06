@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using KeyHold.Models;
 
@@ -32,10 +31,11 @@ public sealed class MouseHookService : IDisposable
             return;
         }
 
-        using var currentProcess = Process.GetCurrentProcess();
-        var currentModule = currentProcess.MainModule;
-        var moduleHandle = currentModule is null ? IntPtr.Zero : GetModuleHandle(currentModule.ModuleName);
-        hookId = SetWindowsHookEx(WhMouseLl, callback, moduleHandle, 0);
+        hookId = SetWindowsHookEx(WhMouseLl, callback, IntPtr.Zero, 0);
+        if (hookId == IntPtr.Zero)
+        {
+            engine.LogDiagnostic($"Mouse hook failed to start. Win32 error: {Marshal.GetLastWin32Error()}.");
+        }
     }
 
     public void Dispose()
@@ -95,9 +95,6 @@ public sealed class MouseHookService : IDisposable
 
     [DllImport("user32.dll")]
     private static extern IntPtr CallNextHookEx(IntPtr hook, int code, IntPtr wParam, IntPtr lParam);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern IntPtr GetModuleHandle(string? moduleName);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct Point
