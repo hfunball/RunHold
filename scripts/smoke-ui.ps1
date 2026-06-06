@@ -50,6 +50,14 @@ function Get-EditValues {
     return $values
 }
 
+function Get-ComboBoxes {
+    param([System.Windows.Automation.AutomationElement]$Root)
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition `
+        -ArgumentList ([System.Windows.Automation.AutomationElement]::ControlTypeProperty), ([System.Windows.Automation.ControlType]::ComboBox)
+    return $Root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
 function Assert-DarkWindow {
     param([System.Windows.Automation.AutomationElement]$Window)
 
@@ -84,6 +92,35 @@ function Assert-DarkWindow {
         $whiteRatio = $white / [double]$samples
         if ($whiteRatio -gt 0.18) {
             throw "Window still has too much white surface area: $([Math]::Round($whiteRatio * 100, 1))% of sampled pixels."
+        }
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+    }
+}
+
+function Assert-DarkControlInterior {
+    param(
+        [System.Windows.Automation.AutomationElement]$Control,
+        [string]$Description
+    )
+
+    Add-Type -AssemblyName System.Drawing
+
+    $rect = $Control.Current.BoundingRectangle
+    $sampleX = [int]($rect.Right - [Math]::Min(80, [Math]::Max(20, $rect.Width / 4)))
+    $sampleY = [int]($rect.Top + ($rect.Height / 2))
+    $bitmap = New-Object System.Drawing.Bitmap 1, 1
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+
+    try {
+        $graphics.CopyFromScreen($sampleX, $sampleY, 0, 0, $bitmap.Size)
+        $color = $bitmap.GetPixel(0, 0)
+        $luminance = (0.2126 * $color.R) + (0.7152 * $color.G) + (0.0722 * $color.B)
+
+        if ($luminance -gt 130) {
+            throw "$Description is still too bright to read in dark mode. Sample RGB: $($color.R), $($color.G), $($color.B)."
         }
     }
     finally {
@@ -139,6 +176,16 @@ try {
     $selection = $bindingsTab.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
     $selection.Select()
 
+    $activationModeBox = Wait-For {
+        $comboBoxes = Get-ComboBoxes -Root $window
+        if ($comboBoxes.Count -gt 0) {
+            return $comboBoxes[0]
+        }
+
+        return $null
+    } 'the activation mode combo box'
+    Assert-DarkControlInterior -Control $activationModeBox -Description 'Activation mode combo box'
+
     $setToggleButton = Wait-For { Find-ByName -Root $window -Name 'Set Toggle Key' } 'the Set Toggle Key button'
     $invoke = $setToggleButton.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
     $invoke.Invoke()
@@ -149,7 +196,7 @@ try {
 
     Wait-For { (Get-EditValues -Root $window) -contains 'A' } 'the captured A key' | Out-Null
 
-    'KeyHold UI smoke passed: dark window, toggle-only binding UI, capture prompt, and key capture.'
+    'KeyHold UI smoke passed: dark window, readable combo box, toggle-only binding UI, capture prompt, and key capture.'
 }
 finally {
     if ($process -and -not $process.HasExited) {
