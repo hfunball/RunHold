@@ -18,6 +18,7 @@ public sealed class SendInputService : IInputSender
     public void SendKeyUp(int virtualKey)
     {
         SendKey(virtualKey, KeyEventFKeyUp);
+        keybd_event((byte)virtualKey, 0, KeyEventFKeyUp, InputInjectionMarker.KeyHoldInput);
     }
 
     private static void SendKey(int virtualKey, uint flags)

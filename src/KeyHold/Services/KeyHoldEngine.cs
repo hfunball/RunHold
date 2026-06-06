@@ -5,7 +5,6 @@ namespace KeyHold.Services;
 public sealed class KeyHoldEngine : IDisposable
 {
     private const int DefaultRepeatedPressIntervalMilliseconds = 45;
-    private const int StableHoldReassertDelayMilliseconds = 1;
 
     private readonly object gate = new();
     private readonly IInputSender inputSender;
@@ -122,9 +121,10 @@ public sealed class KeyHoldEngine : IDisposable
                 {
                     releasedHeldKeys.Add(input.VirtualKey);
                     handoffReadyKeys.Remove(input.VirtualKey);
+                    suppress = true;
                     if (settings.KeyEmulationMode == KeyEmulationMode.StableHold)
                     {
-                        QueueStableHoldReassert(input.VirtualKey);
+                        inputSender.SendKeyDown(input.VirtualKey);
                     }
                 }
             }
@@ -297,23 +297,6 @@ public sealed class KeyHoldEngine : IDisposable
                 inputSender.SendKeyDown(key);
             }
         }
-    }
-
-    private void QueueStableHoldReassert(int virtualKey)
-    {
-        ThreadPool.QueueUserWorkItem(_ =>
-        {
-            Thread.Sleep(StableHoldReassertDelayMilliseconds);
-            lock (gate)
-            {
-                if (disposed || !heldKeys.Contains(virtualKey) || settings.KeyEmulationMode != KeyEmulationMode.StableHold)
-                {
-                    return;
-                }
-
-                inputSender.SendKeyDown(virtualKey);
-            }
-        });
     }
 
     private bool IsEnableTrigger(int virtualKey)

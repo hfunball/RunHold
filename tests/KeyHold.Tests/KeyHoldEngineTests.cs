@@ -30,8 +30,8 @@ public sealed class KeyHoldEngineTests
         CollectionAssert.AreEquivalent(new[] { Shift, W }, sender.DownKeys);
         Assert.IsTrue(engine.Status.IsActive);
 
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(W)));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(W) >= 2));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.AreEqual(2, sender.DownCount(W));
         Assert.IsEmpty(sender.UpKeys);
     }
 
@@ -43,8 +43,8 @@ public sealed class KeyHoldEngineTests
 
         engine.HandleKeyboardEvent(Down(W));
         engine.HandleKeyboardEvent(Down(PageUp));
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(W)));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(W) >= 2));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.AreEqual(2, sender.DownCount(W));
         Assert.IsTrue(engine.HandleKeyboardEvent(Down(PageDown)));
 
         CollectionAssert.Contains(sender.UpKeys, W);
@@ -77,8 +77,8 @@ public sealed class KeyHoldEngineTests
         engine.HandleKeyboardEvent(Down(Home));
         Assert.IsTrue(engine.Status.IsActive);
 
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(W)));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(W) >= 2));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.AreEqual(2, sender.DownCount(W));
         engine.HandleKeyboardEvent(Up(Home));
         Assert.IsTrue(engine.HandleKeyboardEvent(Down(Home)));
 
@@ -110,8 +110,8 @@ public sealed class KeyHoldEngineTests
         Assert.IsTrue(engine.HandleMouseEvent(new MouseInputEvent(MouseTriggerCode.XButton1, true, false)));
         Assert.IsTrue(engine.Status.IsActive);
 
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(W)));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(W) >= 2));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.AreEqual(2, sender.DownCount(W));
         Assert.IsTrue(engine.HandleMouseEvent(new MouseInputEvent(MouseTriggerCode.XButton1, true, false)));
 
         CollectionAssert.Contains(sender.UpKeys, W);
@@ -180,12 +180,11 @@ public sealed class KeyHoldEngineTests
         CollectionAssert.AreEquivalent(new[] { A, S, W }, sender.DownKeys);
         CollectionAssert.AreEquivalent(new[] { A, S, W }, engine.Status.HeldKeys.ToArray());
 
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(A)));
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(S)));
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(W)));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(A) >= 2));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(S) >= 2));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(W) >= 2));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(A)));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(S)));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.AreEqual(2, sender.DownCount(A));
+        Assert.AreEqual(2, sender.DownCount(S));
         Assert.AreEqual(2, sender.DownCount(W));
         Assert.AreEqual(0, sender.UpCount(W));
 
@@ -205,10 +204,8 @@ public sealed class KeyHoldEngineTests
         engine.HandleKeyboardEvent(Down(Space));
         engine.HandleKeyboardEvent(Down(Home));
 
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(W)));
-        Assert.IsFalse(engine.HandleKeyboardEvent(Up(Space)));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(W) >= 2));
-        Assert.IsTrue(WaitUntil(() => sender.DownCount(Space) >= 2));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(Space)));
         Assert.AreEqual(2, sender.DownCount(W));
         Assert.AreEqual(2, sender.DownCount(Space));
 
