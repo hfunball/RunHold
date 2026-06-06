@@ -68,13 +68,26 @@
                 <Grid Margin="14">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal">
+                    <Border x:Name="FirstRunNotice"
+                            Visibility="Collapsed"
+                            Background="{DynamicResource PanelBrush}"
+                            BorderBrush="{DynamicResource AccentBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,14">
+                        <TextBlock Text="KeyHold normally opens to the tray. Use the tray icon near the clock to open, release held keys, or exit. Windows startup can be turned on in Settings."
+                                   Foreground="{DynamicResource TextBrush}"
+                                   TextWrapping="Wrap" />
+                    </Border>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <Button Content="Release All" Click="ReleaseAll_Click" />
                         <Button Content="Hide To Tray" Click="HideToTray_Click" />
                     </StackPanel>
-                    <TextBlock Grid.Row="1"
+                    <TextBlock Grid.Row="2"
                                x:Name="HeldKeysText"
                                Text="No keys held by KeyHold."
                                Margin="0,18,0,0"
@@ -164,7 +177,7 @@
                 </StackPanel>
             </TabItem>
 
-            <TabItem Header="Diagnostics">
+            <TabItem Header="History">
                 <Grid Margin="14">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

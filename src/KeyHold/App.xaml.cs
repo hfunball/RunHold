@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using KeyHold.Models;
 using KeyHold.Services;
@@ -18,6 +19,7 @@ public partial class App
 
         var config = new ConfigService();
         var settings = config.Load();
+        var isFirstRun = !settings.HasSeenFirstRun;
         ThemeService.Apply(settings.Theme);
 
         var sender = new SendInputService();
@@ -26,6 +28,19 @@ public partial class App
         mouseHook = new MouseHookService(engine);
         notifyIconHost = new NotifyIconHost(engine, ShowMainWindow, ExitApplication);
         mainWindow = new MainWindow(settings, config, engine, new StartupService());
+        if (isFirstRun)
+        {
+            mainWindow.ShowFirstRunNotice();
+            settings.HasSeenFirstRun = true;
+            try
+            {
+                config.Save(settings);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                mainWindow.AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Could not save first-run setting: {ex.Message}"));
+            }
+        }
 
         keyboardHook.Start();
         mouseHook.Start();
@@ -45,7 +60,7 @@ public partial class App
             Dispatcher.Invoke(() => mainWindow?.AddDiagnostic(entry));
         };
 
-        if (settings.LaunchToTray)
+        if (!isFirstRun && settings.LaunchToTray)
         {
             mainWindow.Hide();
             return;

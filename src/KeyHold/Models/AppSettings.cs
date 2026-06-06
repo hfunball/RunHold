@@ -19,5 +19,6 @@ public sealed class AppSettings
     public bool ShowNotifications { get; set; } = true;
 
     public bool SuppressTriggerInput { get; set; } = true;
-}
 
+    public bool HasSeenFirstRun { get; set; }
+}

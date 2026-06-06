@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using KeyHold.Models;
@@ -19,6 +20,7 @@ public partial class MainWindow
     private BindingTarget? captureTarget;
     private bool isLoading;
     private bool allowClose;
+    private bool startupEnabled;
 
     public MainWindow(AppSettings settings, ConfigService configService, KeyHoldEngine engine, StartupService startupService)
     {
@@ -48,6 +50,12 @@ public partial class MainWindow
         {
             DiagnosticsList.Items.RemoveAt(DiagnosticsList.Items.Count - 1);
         }
+    }
+
+    public void ShowFirstRunNotice()
+    {
+        FirstRunNotice.Visibility = Visibility.Visible;
+        AddDiagnostic(new DiagnosticEntry(DateTime.Now, "First run: KeyHold opened the main window instead of starting hidden in the tray."));
     }
 
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -123,7 +131,8 @@ public partial class MainWindow
         StopBindingText.Text = settings.StopBinding.DisplayName;
         EmergencyBindingText.Text = settings.EmergencyBinding.DisplayName;
         SuppressTriggersBox.IsChecked = settings.SuppressTriggerInput;
-        StartupBox.IsChecked = startupService.IsEnabled();
+        startupEnabled = TryReadStartupEnabled();
+        StartupBox.IsChecked = startupEnabled;
         LaunchToTrayBox.IsChecked = settings.LaunchToTray;
         NotificationsBox.IsChecked = settings.ShowNotifications;
         isLoading = false;
@@ -136,17 +145,33 @@ public partial class MainWindow
             return;
         }
 
-        settings.ActivationMode = Enum.Parse<ActivationMode>(GetSelectedTag(ActivationModeBox));
-        settings.Theme = Enum.Parse<AppThemeMode>(GetSelectedTag(ThemeBox));
-        settings.MouseTrigger = AppInputBinding.Mouse(Enum.Parse<MouseTriggerCode>(GetSelectedTag(MouseBindingBox)));
-        settings.SuppressTriggerInput = SuppressTriggersBox.IsChecked == true;
-        settings.LaunchToTray = LaunchToTrayBox.IsChecked == true;
-        settings.ShowNotifications = NotificationsBox.IsChecked == true;
+        try
+        {
+            if (!TryGetSelectedTag(ActivationModeBox, out var activationMode)
+                || !TryGetSelectedTag(ThemeBox, out var theme)
+                || !TryGetSelectedTag(MouseBindingBox, out var mouseTrigger))
+            {
+                AddDiagnostic(new DiagnosticEntry(DateTime.Now, "Settings change skipped while controls were still loading."));
+                return;
+            }
 
-        configService.Save(settings);
-        startupService.SetEnabled(StartupBox.IsChecked == true);
-        engine.UpdateSettings(settings);
-        ThemeService.Apply(settings.Theme);
+            settings.ActivationMode = Enum.Parse<ActivationMode>(activationMode);
+            settings.Theme = Enum.Parse<AppThemeMode>(theme);
+            settings.MouseTrigger = AppInputBinding.Mouse(Enum.Parse<MouseTriggerCode>(mouseTrigger));
+            settings.SuppressTriggerInput = SuppressTriggersBox.IsChecked == true;
+            settings.LaunchToTray = LaunchToTrayBox.IsChecked == true;
+            settings.ShowNotifications = NotificationsBox.IsChecked == true;
+
+            configService.Save(settings);
+            TryApplyStartupSetting(StartupBox.IsChecked == true);
+            engine.UpdateSettings(settings);
+            ThemeService.Apply(settings.Theme);
+        }
+        catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Settings change failed: {ex.Message}"));
+            LoadSettingsToUi();
+        }
     }
 
     private static void SetComboSelection(WpfComboBox box, string tag)
@@ -161,9 +186,50 @@ public partial class MainWindow
         }
     }
 
-    private static string GetSelectedTag(WpfComboBox box)
+    private static bool TryGetSelectedTag(WpfComboBox box, out string tag)
     {
-        return (string)((WpfComboBoxItem)box.SelectedItem).Tag;
+        tag = string.Empty;
+        if (box.SelectedItem is not WpfComboBoxItem item || item.Tag is not string selectedTag)
+        {
+            return false;
+        }
+
+        tag = selectedTag;
+        return true;
+    }
+
+    private bool TryReadStartupEnabled()
+    {
+        try
+        {
+            return startupService.IsEnabled();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        {
+            AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Could not read Windows startup setting: {ex.Message}"));
+            return false;
+        }
+    }
+
+    private void TryApplyStartupSetting(bool enabled)
+    {
+        if (enabled == startupEnabled)
+        {
+            return;
+        }
+
+        try
+        {
+            startupService.SetEnabled(enabled);
+            startupEnabled = enabled;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        {
+            AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Could not update Windows startup setting: {ex.Message}"));
+            isLoading = true;
+            StartupBox.IsChecked = startupEnabled;
+            isLoading = false;
+        }
     }
 
     private void ReleaseAll_Click(object sender, RoutedEventArgs e)
