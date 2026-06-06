@@ -9,8 +9,7 @@ If recording is added later:
 - Show a clear recording state.
 - Require explicit save.
 - Keep storage local-only.
-- Provide an always-visible emergency stop.
+- Provide an always-visible stop action.
 - Avoid logging raw typed text where possible.
 - Avoid credential-field capture where detectable.
 - Keep the feature disabled by default.
-

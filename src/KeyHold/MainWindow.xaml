@@ -302,20 +302,8 @@
 
                     <StackPanel Grid.Row="2"
                                 Grid.Column="0"
-                                x:Name="EmergencyBindingPanel"
-                                Margin="0,16,10,0">
-                        <TextBlock Text="Emergency key" FontWeight="SemiBold" />
-                        <TextBox x:Name="EmergencyBindingText" IsReadOnly="True" Focusable="True" />
-                        <Button x:Name="CaptureEmergencyButton"
-                                Content="Set Emergency Key"
-                                Margin="0,8,8,0"
-                                Click="CaptureEmergency_Click" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="2"
-                                Grid.Column="1"
                                 x:Name="MouseBindingPanel"
-                                Margin="10,16,0,0">
+                                Margin="0,16,10,0">
                         <TextBlock Text="Mouse trigger" FontWeight="SemiBold" />
                         <ComboBox x:Name="MouseBindingBox" SelectionChanged="SettingChanged">
                             <ComboBoxItem Content="Mouse Button 4" Tag="XButton1" />

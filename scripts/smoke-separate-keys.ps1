@@ -117,7 +117,6 @@ $s = [byte]0x53
 $w = [byte]0x57
 $pageUpKey = [byte]0x21
 $pageDownKey = [byte]0x22
-$f12Key = [byte]0x7B
 $heldKeys = [byte[]]@($a, $s, $w)
 
 try {
@@ -126,7 +125,6 @@ try {
         ActivationMode = 0
         EnableBinding = @{ Device = 0; Code = 33; DisplayName = 'Page Up' }
         StopBinding = @{ Device = 0; Code = 34; DisplayName = 'Page Down' }
-        EmergencyBinding = @{ Device = 0; Code = 123; DisplayName = 'F12' }
         MouseTrigger = @{ Device = 1; Code = 1; DisplayName = 'Mouse Button 4' }
         KeyEmulationMode = 0
         RepeatedPressIntervalMilliseconds = 45
@@ -181,20 +179,20 @@ try {
     }
     Start-Sleep -Milliseconds 150
 
-    Assert-AllHeld -Keys $heldKeys -Description 'Separate-key emergency smoke'
+    Assert-AllHeld -Keys $heldKeys -Description 'Separate-key physical handoff smoke'
 
-    [KeyHoldSeparateSmokeInput]::KeyDown($f12Key)
+    [KeyHoldSeparateSmokeInput]::KeyDown($w)
     Start-Sleep -Milliseconds 40
-    [KeyHoldSeparateSmokeInput]::KeyUp($f12Key)
+    [KeyHoldSeparateSmokeInput]::KeyUp($w)
 
-    Assert-AllReleased -Keys $heldKeys -Description 'Separate-key emergency smoke'
+    Assert-AllReleased -Keys $heldKeys -Description 'Separate-key physical handoff smoke'
 
-    'KeyHold separate-key smoke passed: Page Up held A/S/W, Page Down stopped them, and F12 emergency released them.'
+    'KeyHold separate-key smoke passed: Page Up held A/S/W, Page Down stopped them, and physical W handoff released them.'
 }
 finally {
     [Environment]::SetEnvironmentVariable('KEYHOLD_ACCEPT_EXTERNAL_INJECTED_INPUT_FOR_SMOKE', $previousSmokeFlag, 'Process')
 
-    foreach ($key in @($a, $s, $w, $pageUpKey, $pageDownKey, $f12Key)) {
+    foreach ($key in @($a, $s, $w, $pageUpKey, $pageDownKey)) {
         [KeyHoldSeparateSmokeInput]::KeyUp($key)
     }
 

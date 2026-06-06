@@ -1,6 +1,6 @@
 # Alternative Check
 
-Recommendation: build KeyHold if the goal is a safer, simpler, game-focused tray utility with diagnostics, clear emergency release, no scripting, clean config, and public-release polish.
+Recommendation: build KeyHold if the goal is a simpler, game-focused tray utility with diagnostics, physical-key handoff, no scripting, clean config, and public-release polish.
 
 Use existing tools instead when they fit:
 
@@ -10,4 +10,3 @@ Use existing tools instead when they fit:
 - TinyTask: small recorder, but user comments mention timing drift, trust concerns, and broad macro playback rather than held-key latching.
 - Pulover's Macro Creator: powerful, but user reviews include repeated adware complaints.
 - Mini Mouse Macro: reasonable free recorder, but broader macro playback rather than a focused held-key utility.
-

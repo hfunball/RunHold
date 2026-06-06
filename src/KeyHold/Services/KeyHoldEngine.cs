@@ -72,13 +72,6 @@ public sealed class KeyHoldEngine : IDisposable
 
             if (input.IsDown)
             {
-                if (settings.EmergencyBinding.MatchesKeyboard(input.VirtualKey))
-                {
-                    ReleaseAllLocked("Emergency hotkey", allowPhysicalHandoff: false);
-                    LogLocked($"Emergency release: {VirtualKeyNames.GetName(input.VirtualKey)}");
-                    return settings.SuppressTriggerInput;
-                }
-
                 if (IsEnableTrigger(input.VirtualKey))
                 {
                     ActivateOrToggleLocked();
@@ -328,11 +321,6 @@ public sealed class KeyHoldEngine : IDisposable
 
     private bool IsAnyKeyboardTrigger(int virtualKey)
     {
-        if (settings.EmergencyBinding.MatchesKeyboard(virtualKey))
-        {
-            return true;
-        }
-
         return settings.ActivationMode switch
         {
             ActivationMode.SeparateKeys => settings.EnableBinding.MatchesKeyboard(virtualKey)

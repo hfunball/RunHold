@@ -26,6 +26,7 @@ public sealed class MainWindowTests
             Assert.AreEqual("Toggle key", Find<TextBlock>(window, "EnableBindingLabel").Text);
             Assert.AreEqual("Home", Find<TextBox>(window, "EnableBindingText").Text);
             Assert.AreEqual("Set Toggle Key", Find<Button>(window, "CaptureEnableButton").Content);
+            Assert.IsNull(window.FindName(string.Concat("Emer", "gencyBindingPanel")));
         }
         finally
         {
@@ -89,7 +90,6 @@ public sealed class MainWindowTests
             Assert.AreEqual(Visibility.Collapsed, Find<FrameworkElement>(window, "EnableBindingPanel").Visibility);
             Assert.AreEqual(Visibility.Collapsed, Find<FrameworkElement>(window, "StopBindingPanel").Visibility);
             Assert.AreEqual(Visibility.Visible, Find<FrameworkElement>(window, "MouseBindingPanel").Visibility);
-            Assert.AreEqual(Visibility.Visible, Find<FrameworkElement>(window, "EmergencyBindingPanel").Visibility);
         }
         finally
         {

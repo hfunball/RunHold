@@ -106,7 +106,6 @@ public partial class MainWindow
         SetComboSelection(MouseBindingBox, settings.MouseTrigger.Code.ToString());
         EnableBindingText.Text = settings.EnableBinding.DisplayName;
         StopBindingText.Text = settings.StopBinding.DisplayName;
-        EmergencyBindingText.Text = settings.EmergencyBinding.DisplayName;
         SuppressTriggersBox.IsChecked = settings.SuppressTriggerInput;
         startupEnabled = TryReadStartupEnabled();
         StartupBox.IsChecked = startupEnabled;
@@ -245,11 +244,6 @@ public partial class MainWindow
         BeginCapture(BindingTarget.Stop);
     }
 
-    private void CaptureEmergency_Click(object sender, RoutedEventArgs e)
-    {
-        BeginCapture(BindingTarget.Emergency);
-    }
-
     private void BeginCapture(BindingTarget target)
     {
         if (!IsCaptureTargetAvailable(target))
@@ -291,9 +285,6 @@ public partial class MainWindow
             case BindingTarget.Stop:
                 settings.StopBinding = binding;
                 break;
-            case BindingTarget.Emergency:
-                settings.EmergencyBinding = binding;
-                break;
         }
 
         captureTarget = null;
@@ -325,7 +316,6 @@ public partial class MainWindow
         EnableBindingLabel.Text = isToggle ? "Toggle key" : "Enable key";
         SetCaptureControlState(BindingTarget.Enable, EnableBindingText, CaptureEnableButton, settings.EnableBinding.DisplayName);
         SetCaptureControlState(BindingTarget.Stop, StopBindingText, CaptureStopButton, settings.StopBinding.DisplayName);
-        SetCaptureControlState(BindingTarget.Emergency, EmergencyBindingText, CaptureEmergencyButton, settings.EmergencyBinding.DisplayName);
     }
 
     private void SetCaptureControlState(BindingTarget target, WpfTextBox textBox, WpfButton button, string bindingName)
@@ -343,7 +333,6 @@ public partial class MainWindow
             BindingTarget.Enable when activationMode == ActivationMode.Toggle => "Toggle Key",
             BindingTarget.Enable => "Enable Key",
             BindingTarget.Stop => "Stop Key",
-            BindingTarget.Emergency => "Emergency Key",
             _ => "Key"
         };
     }
@@ -355,7 +344,6 @@ public partial class MainWindow
         {
             BindingTarget.Enable => activationMode != ActivationMode.MouseTrigger,
             BindingTarget.Stop => activationMode == ActivationMode.SeparateKeys,
-            BindingTarget.Emergency => true,
             _ => false
         };
     }
@@ -366,7 +354,6 @@ public partial class MainWindow
         {
             BindingTarget.Enable => EnableBindingText,
             BindingTarget.Stop => StopBindingText,
-            BindingTarget.Emergency => EmergencyBindingText,
             _ => EnableBindingText
         };
     }
@@ -379,7 +366,6 @@ public partial class MainWindow
     private enum BindingTarget
     {
         Enable,
-        Stop,
-        Emergency
+        Stop
     }
 }

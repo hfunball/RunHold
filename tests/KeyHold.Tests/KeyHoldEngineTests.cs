@@ -15,7 +15,6 @@ public sealed class KeyHoldEngineTests
     private const int PageUp = 0x21;
     private const int PageDown = 0x22;
     private const int Home = 0x24;
-    private const int F12 = 0x7B;
 
     [TestMethod]
     public void SeparateKeys_CapturesHeldKeysAndReassertsAfterRelease()
@@ -132,22 +131,6 @@ public sealed class KeyHoldEngineTests
         CollectionAssert.Contains(sender.DownKeys, PageUp);
         CollectionAssert.Contains(sender.DownKeys, PageDown);
         Assert.IsTrue(engine.Status.IsActive);
-    }
-
-    [TestMethod]
-    public void EmergencyHotkeyReleasesHeldKeys()
-    {
-        var sender = new RecordingInputSender();
-        using var engine = CreateEngine(new AppSettings(), sender);
-
-        engine.HandleKeyboardEvent(Down(W));
-        engine.HandleKeyboardEvent(Down(Home));
-        Assert.IsTrue(engine.Status.IsActive);
-
-        Assert.IsTrue(engine.HandleKeyboardEvent(Down(F12)));
-
-        CollectionAssert.Contains(sender.UpKeys, W);
-        Assert.IsFalse(engine.Status.IsActive);
     }
 
     [TestMethod]

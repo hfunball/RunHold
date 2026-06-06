@@ -170,7 +170,6 @@ $form.Add_Activated({
         ActivationMode = 0
         EnableBinding = @{ Device = 0; Code = 33; DisplayName = 'Page Up' }
         StopBinding = @{ Device = 0; Code = 34; DisplayName = 'Page Down' }
-        EmergencyBinding = @{ Device = 0; Code = 123; DisplayName = 'F12' }
         MouseTrigger = @{ Device = 1; Code = 1; DisplayName = 'Mouse Button 4' }
         KeyEmulationMode = 1
         RepeatedPressIntervalMilliseconds = 45
