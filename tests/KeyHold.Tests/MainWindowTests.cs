@@ -13,6 +13,24 @@ public sealed class MainWindowTests
     private const int A = 0x41;
 
     [STATestMethod]
+    public void DefaultSettings_ShowHomeToggleOnly()
+    {
+        var window = CreateWindow(new AppSettings());
+        try
+        {
+            Assert.AreEqual(Visibility.Visible, Find<FrameworkElement>(window, "EnableBindingPanel").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, Find<FrameworkElement>(window, "StopBindingPanel").Visibility);
+            Assert.AreEqual("Toggle key", Find<TextBlock>(window, "EnableBindingLabel").Text);
+            Assert.AreEqual("Home", Find<TextBox>(window, "EnableBindingText").Text);
+            Assert.AreEqual("Set Toggle Key", Find<Button>(window, "CaptureEnableButton").Content);
+        }
+        finally
+        {
+            Close(window);
+        }
+    }
+
+    [STATestMethod]
     public void ToggleMode_ShowsOneKeyboardTrigger()
     {
         var window = CreateWindow(new AppSettings { ActivationMode = ActivationMode.Toggle });

@@ -8,6 +8,7 @@
         MinHeight="500"
         Background="{DynamicResource AppBackgroundBrush}"
         Foreground="{DynamicResource TextBrush}"
+        Icon="Assets/KeyHold.png"
         Focusable="True"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>

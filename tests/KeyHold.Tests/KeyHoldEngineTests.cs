@@ -14,13 +14,14 @@ public sealed class KeyHoldEngineTests
     private const int Shift = 0x10;
     private const int PageUp = 0x21;
     private const int PageDown = 0x22;
+    private const int Home = 0x24;
     private const int F12 = 0x7B;
 
     [TestMethod]
     public void SeparateKeys_CapturesHeldKeysAndSuppressesTheirRelease()
     {
         var sender = new RecordingInputSender();
-        using var engine = CreateEngine(new AppSettings(), sender);
+        using var engine = CreateEngine(CreateSeparateKeySettings(), sender);
 
         Assert.IsFalse(engine.HandleKeyboardEvent(Down(W)));
         Assert.IsFalse(engine.HandleKeyboardEvent(Down(Shift)));
@@ -37,7 +38,7 @@ public sealed class KeyHoldEngineTests
     public void SeparateKeys_StopKeyReleasesHeldKeys()
     {
         var sender = new RecordingInputSender();
-        using var engine = CreateEngine(new AppSettings(), sender);
+        using var engine = CreateEngine(CreateSeparateKeySettings(), sender);
 
         engine.HandleKeyboardEvent(Down(W));
         engine.HandleKeyboardEvent(Down(PageUp));
@@ -49,18 +50,34 @@ public sealed class KeyHoldEngineTests
     }
 
     [TestMethod]
-    public void ToggleMode_SecondActivationReleasesHeldKeys()
+    public void SeparateKeys_StopKeyReleasesHeldKeysWithoutPhysicalRegrab()
     {
         var sender = new RecordingInputSender();
-        var settings = new AppSettings { ActivationMode = ActivationMode.Toggle };
-        using var engine = CreateEngine(settings, sender);
+        using var engine = CreateEngine(CreateSeparateKeySettings(), sender);
 
         engine.HandleKeyboardEvent(Down(W));
         engine.HandleKeyboardEvent(Down(PageUp));
         Assert.IsTrue(engine.Status.IsActive);
 
+        Assert.IsTrue(engine.HandleKeyboardEvent(Down(PageDown)));
+
+        CollectionAssert.Contains(sender.UpKeys, W);
+        Assert.IsFalse(engine.Status.IsActive);
+    }
+
+    [TestMethod]
+    public void ToggleMode_DefaultHomeActivationReleasesHeldKeys()
+    {
+        var sender = new RecordingInputSender();
+        using var engine = CreateEngine(new AppSettings(), sender);
+
+        engine.HandleKeyboardEvent(Down(W));
+        engine.HandleKeyboardEvent(Down(Home));
+        Assert.IsTrue(engine.Status.IsActive);
+
         Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
-        engine.HandleKeyboardEvent(Down(PageUp));
+        engine.HandleKeyboardEvent(Up(Home));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Down(Home)));
 
         CollectionAssert.Contains(sender.UpKeys, W);
         Assert.IsFalse(engine.Status.IsActive);
@@ -70,11 +87,10 @@ public sealed class KeyHoldEngineTests
     public void ToggleMode_CanHoldSeparateModeStopKey()
     {
         var sender = new RecordingInputSender();
-        var settings = new AppSettings { ActivationMode = ActivationMode.Toggle };
-        using var engine = CreateEngine(settings, sender);
+        using var engine = CreateEngine(new AppSettings(), sender);
 
         engine.HandleKeyboardEvent(Down(PageDown));
-        engine.HandleKeyboardEvent(Down(PageUp));
+        engine.HandleKeyboardEvent(Down(Home));
 
         CollectionAssert.Contains(sender.DownKeys, PageDown);
         Assert.IsTrue(engine.Status.IsActive);
@@ -121,7 +137,7 @@ public sealed class KeyHoldEngineTests
         using var engine = CreateEngine(new AppSettings(), sender);
 
         engine.HandleKeyboardEvent(Down(W));
-        engine.HandleKeyboardEvent(Down(PageUp));
+        engine.HandleKeyboardEvent(Down(Home));
         Assert.IsTrue(engine.Status.IsActive);
 
         Assert.IsTrue(engine.HandleKeyboardEvent(Down(F12)));
@@ -137,7 +153,7 @@ public sealed class KeyHoldEngineTests
         using var engine = CreateEngine(new AppSettings(), sender);
 
         engine.HandleKeyboardEvent(Down(W));
-        engine.HandleKeyboardEvent(Down(PageUp));
+        engine.HandleKeyboardEvent(Down(Home));
 
         Thread.Sleep(60);
 
@@ -150,7 +166,7 @@ public sealed class KeyHoldEngineTests
     public void StableHold_CapturesThreeKeysAndReassertsAfterPhysicalRelease()
     {
         var sender = new RecordingInputSender();
-        using var engine = CreateEngine(new AppSettings(), sender);
+        using var engine = CreateEngine(CreateSeparateKeySettings(), sender);
 
         engine.HandleKeyboardEvent(Down(A));
         engine.HandleKeyboardEvent(Down(S));
@@ -180,7 +196,7 @@ public sealed class KeyHoldEngineTests
 
         engine.HandleKeyboardEvent(Down(W));
         engine.HandleKeyboardEvent(Down(Space));
-        engine.HandleKeyboardEvent(Down(PageUp));
+        engine.HandleKeyboardEvent(Down(Home));
 
         Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
         Assert.IsTrue(engine.HandleKeyboardEvent(Up(Space)));
@@ -189,7 +205,7 @@ public sealed class KeyHoldEngineTests
 
         Assert.IsTrue(engine.HandleKeyboardEvent(Down(W)));
         Assert.IsTrue(engine.HandleKeyboardEvent(Down(Space)));
-        Assert.IsTrue(engine.HandleKeyboardEvent(Down(PageDown)));
+        Assert.IsTrue(engine.HandleKeyboardEvent(Down(Home)));
 
         Assert.AreEqual(3, sender.DownCount(W));
         Assert.AreEqual(3, sender.DownCount(Space));
@@ -209,6 +225,9 @@ public sealed class KeyHoldEngineTests
         var sender = new RecordingInputSender();
         var settings = new AppSettings
         {
+            ActivationMode = ActivationMode.SeparateKeys,
+            EnableBinding = InputBinding.Keyboard(PageUp),
+            StopBinding = InputBinding.Keyboard(PageDown),
             KeyEmulationMode = KeyEmulationMode.RepeatedPress,
             RepeatedPressIntervalMilliseconds = 10
         };
@@ -243,6 +262,16 @@ public sealed class KeyHoldEngineTests
     private static KeyHoldEngine CreateEngine(AppSettings settings, RecordingInputSender sender)
     {
         return new KeyHoldEngine(settings, sender);
+    }
+
+    private static AppSettings CreateSeparateKeySettings()
+    {
+        return new AppSettings
+        {
+            ActivationMode = ActivationMode.SeparateKeys,
+            EnableBinding = InputBinding.Keyboard(PageUp),
+            StopBinding = InputBinding.Keyboard(PageDown)
+        };
     }
 
     private static bool WaitUntil(Func<bool> condition)

@@ -74,14 +74,14 @@ $keyHoldProcess = $null
 $a = [byte]0x41
 $s = [byte]0x53
 $w = [byte]0x57
-$pageUp = [byte]0x21
-$pageDown = [byte]0x22
+$homeKey = [byte]0x24
+$f12 = [byte]0x7B
 
 try {
     New-Item -ItemType Directory -Path $settingsFolder -Force | Out-Null
     $testSettings = @{
-        ActivationMode = 0
-        EnableBinding = @{ Device = 0; Code = 33; DisplayName = 'Page Up' }
+        ActivationMode = 1
+        EnableBinding = @{ Device = 0; Code = 36; DisplayName = 'Home' }
         StopBinding = @{ Device = 0; Code = 34; DisplayName = 'Page Down' }
         EmergencyBinding = @{ Device = 0; Code = 123; DisplayName = 'F12' }
         MouseTrigger = @{ Device = 1; Code = 1; DisplayName = 'Mouse Button 4' }
@@ -108,48 +108,9 @@ try {
     [KeyHoldStableSmokeInput]::KeyDown($s)
     [KeyHoldStableSmokeInput]::KeyDown($w)
     Start-Sleep -Milliseconds 150
-    [KeyHoldStableSmokeInput]::KeyDown($pageUp)
+    [KeyHoldStableSmokeInput]::KeyDown($homeKey)
     Start-Sleep -Milliseconds 40
-    [KeyHoldStableSmokeInput]::KeyUp($pageUp)
-    Start-Sleep -Milliseconds 100
-    [KeyHoldStableSmokeInput]::KeyDown($pageDown)
-    Start-Sleep -Milliseconds 40
-    [KeyHoldStableSmokeInput]::KeyUp($pageDown)
-    Start-Sleep -Milliseconds 150
-
-    $handoffSamples = 0
-    $handoffDownSamples = 0
-    for ($i = 0; $i -lt 15; $i++) {
-        $allDown = [KeyHoldStableSmokeInput]::IsDown($a) -and [KeyHoldStableSmokeInput]::IsDown($s) -and [KeyHoldStableSmokeInput]::IsDown($w)
-        if ($allDown) {
-            $handoffDownSamples++
-        }
-
-        $handoffSamples++
-        Start-Sleep -Milliseconds 20
-    }
-
-    if ($handoffDownSamples -lt 12) {
-        throw "Stable hold smoke failed. Expected A/S/W to remain down when Stop transferred to already-held physical keys; saw all three down in $handoffDownSamples of $handoffSamples samples."
-    }
-
-    [KeyHoldStableSmokeInput]::KeyUp($a)
-    [KeyHoldStableSmokeInput]::KeyUp($s)
-    [KeyHoldStableSmokeInput]::KeyUp($w)
-    Start-Sleep -Milliseconds 200
-
-    $anyStillDown = [KeyHoldStableSmokeInput]::IsDown($a) -or [KeyHoldStableSmokeInput]::IsDown($s) -or [KeyHoldStableSmokeInput]::IsDown($w)
-    if ($anyStillDown) {
-        throw 'Stable hold smoke failed. At least one handoff key was still down after physical release.'
-    }
-
-    [KeyHoldStableSmokeInput]::KeyDown($a)
-    [KeyHoldStableSmokeInput]::KeyDown($s)
-    [KeyHoldStableSmokeInput]::KeyDown($w)
-    Start-Sleep -Milliseconds 150
-    [KeyHoldStableSmokeInput]::KeyDown($pageUp)
-    Start-Sleep -Milliseconds 40
-    [KeyHoldStableSmokeInput]::KeyUp($pageUp)
+    [KeyHoldStableSmokeInput]::KeyUp($homeKey)
     Start-Sleep -Milliseconds 100
     [KeyHoldStableSmokeInput]::KeyUp($a)
     [KeyHoldStableSmokeInput]::KeyUp($s)
@@ -172,22 +133,61 @@ try {
         throw "Stable hold smoke failed. Expected A/S/W to stay down after physical release; saw all three down in $allDownSamples of $samples samples."
     }
 
-    [KeyHoldStableSmokeInput]::KeyDown($pageDown)
+    [KeyHoldStableSmokeInput]::KeyDown($homeKey)
     Start-Sleep -Milliseconds 40
-    [KeyHoldStableSmokeInput]::KeyUp($pageDown)
+    [KeyHoldStableSmokeInput]::KeyUp($homeKey)
     Start-Sleep -Milliseconds 200
 
     $anyStillDown = [KeyHoldStableSmokeInput]::IsDown($a) -or [KeyHoldStableSmokeInput]::IsDown($s) -or [KeyHoldStableSmokeInput]::IsDown($w)
     if ($anyStillDown) {
-        throw 'Stable hold smoke failed. At least one held key was still down after Stop.'
+        throw 'Stable hold smoke failed. At least one held key was still down after Home stop.'
     }
 
-    'KeyHold stable-hold smoke passed: A/S/W transferred cleanly when physical keys stayed down, stayed down after physical release, and released on Stop.'
+    [KeyHoldStableSmokeInput]::KeyDown($a)
+    [KeyHoldStableSmokeInput]::KeyDown($s)
+    [KeyHoldStableSmokeInput]::KeyDown($w)
+    Start-Sleep -Milliseconds 150
+    [KeyHoldStableSmokeInput]::KeyDown($homeKey)
+    Start-Sleep -Milliseconds 40
+    [KeyHoldStableSmokeInput]::KeyUp($homeKey)
+    Start-Sleep -Milliseconds 100
+    [KeyHoldStableSmokeInput]::KeyUp($a)
+    [KeyHoldStableSmokeInput]::KeyUp($s)
+    [KeyHoldStableSmokeInput]::KeyUp($w)
+    Start-Sleep -Milliseconds 150
+
+    $emergencySamples = 0
+    $emergencyDownSamples = 0
+    for ($i = 0; $i -lt 25; $i++) {
+        $allDown = [KeyHoldStableSmokeInput]::IsDown($a) -and [KeyHoldStableSmokeInput]::IsDown($s) -and [KeyHoldStableSmokeInput]::IsDown($w)
+        if ($allDown) {
+            $emergencyDownSamples++
+        }
+
+        $emergencySamples++
+        Start-Sleep -Milliseconds 20
+    }
+
+    if ($emergencyDownSamples -lt 22) {
+        throw "Stable hold smoke failed. Expected A/S/W to stay down before emergency release; saw all three down in $emergencyDownSamples of $emergencySamples samples."
+    }
+
+    [KeyHoldStableSmokeInput]::KeyDown($f12)
+    Start-Sleep -Milliseconds 40
+    [KeyHoldStableSmokeInput]::KeyUp($f12)
+    Start-Sleep -Milliseconds 200
+
+    $anyStillDown = [KeyHoldStableSmokeInput]::IsDown($a) -or [KeyHoldStableSmokeInput]::IsDown($s) -or [KeyHoldStableSmokeInput]::IsDown($w)
+    if ($anyStillDown) {
+        throw 'Stable hold smoke failed. At least one held key was still down after F12 emergency release.'
+    }
+
+    'KeyHold stable-hold smoke passed: Home toggle held A/S/W after physical release, Home stopped them, and F12 emergency released them.'
 }
 finally {
     [Environment]::SetEnvironmentVariable('KEYHOLD_ACCEPT_EXTERNAL_INJECTED_INPUT_FOR_SMOKE', $previousSmokeFlag, 'Process')
 
-    foreach ($key in @($a, $s, $w, $pageUp, $pageDown)) {
+    foreach ($key in @($a, $s, $w, $homeKey, $f12)) {
         [KeyHoldStableSmokeInput]::KeyUp($key)
     }
 

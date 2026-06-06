@@ -10,6 +10,8 @@ public sealed class KeyHoldEngine : IDisposable
     private readonly IInputSender inputSender;
     private readonly HashSet<int> physicalKeysDown = [];
     private readonly HashSet<int> heldKeys = [];
+    private readonly HashSet<int> releasedHeldKeys = [];
+    private readonly HashSet<int> handoffReadyKeys = [];
     private AppSettings settings;
     private System.Threading.Timer? repeatTimer;
     private bool disposed;
@@ -92,6 +94,11 @@ public sealed class KeyHoldEngine : IDisposable
                     physicalKeysDown.Add(input.VirtualKey);
                     if (heldKeys.Contains(input.VirtualKey))
                     {
+                        if (releasedHeldKeys.Contains(input.VirtualKey))
+                        {
+                            handoffReadyKeys.Add(input.VirtualKey);
+                        }
+
                         suppress = true;
                     }
                 }
@@ -109,6 +116,8 @@ public sealed class KeyHoldEngine : IDisposable
 
                 if (heldKeys.Contains(input.VirtualKey))
                 {
+                    releasedHeldKeys.Add(input.VirtualKey);
+                    handoffReadyKeys.Remove(input.VirtualKey);
                     suppress = true;
                     if (settings.KeyEmulationMode == KeyEmulationMode.StableHold)
                     {
@@ -195,6 +204,8 @@ public sealed class KeyHoldEngine : IDisposable
             return;
         }
 
+        releasedHeldKeys.Clear();
+        handoffReadyKeys.Clear();
         foreach (var key in snapshot)
         {
             inputSender.SendKeyDown(key);
@@ -211,6 +222,8 @@ public sealed class KeyHoldEngine : IDisposable
         StopRepeatTimerLocked();
         if (heldKeys.Count == 0)
         {
+            releasedHeldKeys.Clear();
+            handoffReadyKeys.Clear();
             PublishStatusLocked(reason);
             return;
         }
@@ -218,7 +231,7 @@ public sealed class KeyHoldEngine : IDisposable
         var transferredKeys = new List<int>();
         foreach (var key in heldKeys.OrderByDescending(key => key).ToArray())
         {
-            if (allowPhysicalHandoff && physicalKeysDown.Contains(key))
+            if (allowPhysicalHandoff && physicalKeysDown.Contains(key) && handoffReadyKeys.Contains(key))
             {
                 inputSender.SendKeyDown(key);
                 transferredKeys.Add(key);
@@ -229,6 +242,8 @@ public sealed class KeyHoldEngine : IDisposable
         }
 
         heldKeys.Clear();
+        releasedHeldKeys.Clear();
+        handoffReadyKeys.Clear();
         PublishStatusLocked(reason);
         if (transferredKeys.Count > 0)
         {

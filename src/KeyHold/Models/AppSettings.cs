@@ -2,9 +2,9 @@ namespace KeyHold.Models;
 
 public sealed class AppSettings
 {
-    public ActivationMode ActivationMode { get; set; } = ActivationMode.SeparateKeys;
+    public ActivationMode ActivationMode { get; set; } = ActivationMode.Toggle;
 
-    public InputBinding EnableBinding { get; set; } = InputBinding.Keyboard(0x21);
+    public InputBinding EnableBinding { get; set; } = InputBinding.Keyboard(0x24);
 
     public InputBinding StopBinding { get; set; } = InputBinding.Keyboard(0x22);
 

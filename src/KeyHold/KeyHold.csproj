@@ -6,6 +6,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>KeyHold</AssemblyName>
     <RootNamespace>KeyHold</RootNamespace>
+    <ApplicationIcon>Assets\KeyHold.ico</ApplicationIcon>
   </PropertyGroup>
-</Project>
 
+  <ItemGroup>
+    <Resource Include="Assets\KeyHold.png" />
+  </ItemGroup>
+</Project>
