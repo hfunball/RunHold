@@ -8,7 +8,7 @@ The beta product name is KeyHold. The early brand board keeps KeyLatch as a back
 
 - Keyboard hold only.
 - Beta target: stable hold for up to three captured keyboard keys.
-- A single keyboard toggle activates and stops a hold.
+- A single keyboard or supported mouse-button toggle activates and stops a hold.
 - No macro recording or playback in 1.0.
 - No stealth behavior, multiplayer advantage, anti-cheat bypassing, or hidden automation.
 - Dark and light UI themes.
@@ -33,6 +33,6 @@ dotnet run --project src/KeyHold
 
 ## Security Position
 
-KeyHold monitors keyboard state and injects keyboard input, so it is treated as security-sensitive. It does not include networking, telemetry, credential capture, macro recording, or raw typed-text logging.
+KeyHold monitors keyboard state and supported mouse trigger buttons, and it injects keyboard input, so it is treated as security-sensitive. It does not include networking, telemetry, credential capture, macro recording, or raw typed-text logging.
 
 See [docs/security/threat-model.md](docs/security/threat-model.md) and [docs/security/security-plan.md](docs/security/security-plan.md).

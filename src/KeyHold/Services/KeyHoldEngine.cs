@@ -105,6 +105,30 @@ public sealed class KeyHoldEngine : IDisposable
         return suppress;
     }
 
+    public bool HandleMouseEvent(MouseInputEvent input)
+    {
+        if (input.IsInjected || !settings.ToggleBinding.MatchesMouse(input.Button))
+        {
+            return false;
+        }
+
+        lock (gate)
+        {
+            if (uiCaptureActive)
+            {
+                return false;
+            }
+
+            if (input.IsDown)
+            {
+                ActivateOrReleaseLocked();
+            }
+
+            LogLocked($"{(input.IsDown ? "Mouse down" : "Mouse up")}: {InputBinding.Mouse(input.Button).DisplayName} (suppressed)");
+            return true;
+        }
+    }
+
     public void ReleaseAll(string reason)
     {
         lock (gate)

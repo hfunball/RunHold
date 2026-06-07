@@ -19,7 +19,7 @@ public sealed class MainWindowTests
         try
         {
             Assert.AreEqual("Home", Find<TextBox>(window, "ToggleBindingText").Text);
-            Assert.AreEqual("Set Toggle Key", Find<Button>(window, "CaptureToggleButton").Content);
+            Assert.AreEqual("Set Toggle Trigger", Find<Button>(window, "CaptureToggleButton").Content);
             Assert.IsNull(window.FindName(string.Concat("Activation", "ModeBox")));
             Assert.IsNull(window.FindName(string.Concat("Stop", "BindingPanel")));
             Assert.IsNull(window.FindName(string.Concat("Mouse", "BindingPanel")));
@@ -41,13 +41,33 @@ public sealed class MainWindowTests
 
             button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
-            Assert.AreEqual("Press a key...", Find<TextBox>(window, "ToggleBindingText").Text);
+            Assert.AreEqual("Press key or mouse...", Find<TextBox>(window, "ToggleBindingText").Text);
             Assert.AreEqual("Listening...", button.Content);
 
             window.CompleteKeyCaptureForTest(A);
 
             Assert.AreEqual("A", Find<TextBox>(window, "ToggleBindingText").Text);
-            Assert.AreEqual("Set Toggle Key", button.Content);
+            Assert.AreEqual("Set Toggle Trigger", button.Content);
+        }
+        finally
+        {
+            Close(window);
+        }
+    }
+
+    [STATestMethod]
+    public void CaptureCanStoreMouseButton()
+    {
+        var window = CreateWindow(new AppSettings());
+        try
+        {
+            var button = Find<Button>(window, "CaptureToggleButton");
+
+            button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.CompleteMouseCaptureForTest(MouseTriggerCode.XButton1);
+
+            Assert.AreEqual("Mouse Button 4", Find<TextBox>(window, "ToggleBindingText").Text);
+            Assert.AreEqual("Set Toggle Trigger", button.Content);
         }
         finally
         {

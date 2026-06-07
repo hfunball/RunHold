@@ -2,7 +2,7 @@
 
 ## Security-sensitive behavior
 
-KeyHold monitors keyboard state and injects keyboard input. That means it must behave like a visible local utility, not hidden automation.
+KeyHold monitors keyboard state and supported mouse trigger buttons, and it injects keyboard input. That means it must behave like a visible local utility, not hidden automation.
 
 ## Primary risks
 
@@ -24,4 +24,3 @@ KeyHold monitors keyboard state and injects keyboard input. That means it must b
 - Keep startup opt-in and user-visible.
 - Scan dependencies and builds before release.
 - Document single-player scope and compatibility limits.
-

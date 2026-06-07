@@ -81,6 +81,40 @@ public sealed class KeyHoldEngineTests
     }
 
     [TestMethod]
+    public void MouseToggle_CapturesAndReleasesHeldKeys()
+    {
+        var sender = new RecordingInputSender();
+        var settings = new AppSettings { ToggleBinding = InputBinding.Mouse(MouseTriggerCode.XButton1) };
+        using var engine = CreateEngine(settings, sender);
+
+        engine.HandleKeyboardEvent(Down(W));
+        Assert.IsTrue(engine.HandleMouseEvent(new MouseInputEvent(MouseTriggerCode.XButton1, true, false)));
+        Assert.IsTrue(engine.Status.IsActive);
+
+        Assert.IsTrue(engine.HandleKeyboardEvent(Up(W)));
+        Assert.AreEqual(2, sender.DownCount(W));
+        Assert.IsTrue(engine.HandleMouseEvent(new MouseInputEvent(MouseTriggerCode.XButton1, true, false)));
+
+        CollectionAssert.Contains(sender.UpKeys, W);
+        Assert.IsFalse(engine.Status.IsActive);
+    }
+
+    [TestMethod]
+    public void MouseToggle_IgnoresOtherMouseButtons()
+    {
+        var sender = new RecordingInputSender();
+        var settings = new AppSettings { ToggleBinding = InputBinding.Mouse(MouseTriggerCode.XButton1) };
+        using var engine = CreateEngine(settings, sender);
+
+        engine.HandleKeyboardEvent(Down(W));
+
+        Assert.IsFalse(engine.HandleMouseEvent(new MouseInputEvent(MouseTriggerCode.XButton2, true, false)));
+
+        Assert.IsFalse(engine.Status.IsActive);
+        Assert.IsEmpty(sender.DownKeys);
+    }
+
+    [TestMethod]
     public void StableHold_CapturesThreeKeysAndReassertsAfterPhysicalRelease()
     {
         var sender = new RecordingInputSender();

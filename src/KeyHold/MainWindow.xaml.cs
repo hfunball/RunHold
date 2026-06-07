@@ -8,6 +8,7 @@ using AppInputBinding = KeyHold.Models.InputBinding;
 using WpfComboBox = System.Windows.Controls.ComboBox;
 using WpfComboBoxItem = System.Windows.Controls.ComboBoxItem;
 using WpfKeyEventArgs = System.Windows.Input.KeyEventArgs;
+using WpfMouseButtonEventArgs = System.Windows.Input.MouseButtonEventArgs;
 
 namespace KeyHold;
 
@@ -93,6 +94,19 @@ public partial class MainWindow
 
         e.Handled = true;
         CompleteKeyCapture(KeyInterop.VirtualKeyFromKey(e.Key == Key.System ? e.SystemKey : e.Key));
+    }
+
+    protected override void OnPreviewMouseDown(WpfMouseButtonEventArgs e)
+    {
+        base.OnPreviewMouseDown(e);
+
+        if (!isCapturingToggle || !TryGetMouseTrigger(e.ChangedButton, out var button))
+        {
+            return;
+        }
+
+        e.Handled = true;
+        CompleteMouseCapture(button);
     }
 
     private void LoadSettingsToUi()
@@ -226,7 +240,7 @@ public partial class MainWindow
         isCapturingToggle = true;
         engine.SetUiCaptureActive(true);
         UpdateBindingUi();
-        AddDiagnostic(new DiagnosticEntry(DateTime.Now, "Press a key to set toggle key."));
+        AddDiagnostic(new DiagnosticEntry(DateTime.Now, "Press a key or supported mouse button to set toggle trigger."));
         Activate();
         Dispatcher.InvokeAsync(() =>
         {
@@ -240,6 +254,11 @@ public partial class MainWindow
         CompleteKeyCapture(virtualKey);
     }
 
+    internal void CompleteMouseCaptureForTest(MouseTriggerCode button)
+    {
+        CompleteMouseCapture(button);
+    }
+
     private void CompleteKeyCapture(int virtualKey)
     {
         if (!isCapturingToggle || virtualKey == 0)
@@ -248,12 +267,27 @@ public partial class MainWindow
         }
 
         var binding = AppInputBinding.Keyboard(virtualKey);
+        CompleteCapture(binding);
+    }
+
+    private void CompleteMouseCapture(MouseTriggerCode button)
+    {
+        if (!isCapturingToggle)
+        {
+            return;
+        }
+
+        CompleteCapture(AppInputBinding.Mouse(button));
+    }
+
+    private void CompleteCapture(AppInputBinding binding)
+    {
         settings.ToggleBinding = binding;
         isCapturingToggle = false;
         engine.SetUiCaptureActive(false);
         SaveSettingsFromUi();
         LoadSettingsToUi();
-        AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Set toggle key to {binding.DisplayName}."));
+        AddDiagnostic(new DiagnosticEntry(DateTime.Now, $"Set toggle trigger to {binding.DisplayName}."));
     }
 
     private void CancelCapture(string message)
@@ -266,12 +300,25 @@ public partial class MainWindow
 
     private void UpdateBindingUi()
     {
-        ToggleBindingText.Text = isCapturingToggle ? "Press a key..." : settings.ToggleBinding.DisplayName;
-        CaptureToggleButton.Content = isCapturingToggle ? "Listening..." : "Set Toggle Key";
+        ToggleBindingText.Text = isCapturingToggle ? "Press key or mouse..." : settings.ToggleBinding.DisplayName;
+        CaptureToggleButton.Content = isCapturingToggle ? "Listening..." : "Set Toggle Trigger";
     }
 
     private void SettingChanged(object sender, RoutedEventArgs e)
     {
         SaveSettingsFromUi();
+    }
+
+    private static bool TryGetMouseTrigger(MouseButton button, out MouseTriggerCode trigger)
+    {
+        trigger = button switch
+        {
+            MouseButton.Middle => MouseTriggerCode.Middle,
+            MouseButton.XButton1 => MouseTriggerCode.XButton1,
+            MouseButton.XButton2 => MouseTriggerCode.XButton2,
+            _ => default
+        };
+
+        return button is MouseButton.Middle or MouseButton.XButton1 or MouseButton.XButton2;
     }
 }

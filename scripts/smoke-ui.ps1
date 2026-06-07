@@ -188,7 +188,7 @@ try {
     $selection.Select()
     Assert-DarkControlInterior -Control $bindingsTab -Description 'Selected Bindings tab'
 
-    $setToggleButton = Wait-For { Find-ByName -Root $window -Name 'Set Toggle Key' } 'the Set Toggle Key button'
+    $setToggleButton = Wait-For { Find-ByName -Root $window -Name 'Set Toggle Trigger' } 'the Set Toggle Trigger button'
     $setStopButton = Find-ByName -Root $window -Name ('Set ' + 'Stop Key')
     if ($setStopButton) {
         throw 'Toggle binding smoke failed. Stop key controls were visible.'
@@ -197,13 +197,13 @@ try {
     $invoke = $setToggleButton.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
     $invoke.Invoke()
 
-    Wait-For { (Get-EditValues -Root $window) -contains 'Press a key...' } 'the key-capture prompt' | Out-Null
+    Wait-For { (Get-EditValues -Root $window) -contains 'Press key or mouse...' } 'the trigger-capture prompt' | Out-Null
 
     [System.Windows.Forms.SendKeys]::SendWait('a')
 
     Wait-For { (Get-EditValues -Root $window) -contains 'A' } 'the captured A key' | Out-Null
 
-    'KeyHold UI smoke passed: dark window, toggle-only binding UI, capture prompt, and key capture.'
+    'KeyHold UI smoke passed: dark window, toggle-trigger binding UI, capture prompt, and key capture.'
 }
 finally {
     if ($process -and -not $process.HasExited) {

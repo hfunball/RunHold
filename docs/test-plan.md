@@ -2,8 +2,8 @@
 
 ## Diagnostics
 
-- Confirm Home and any configured toggle key are detected.
-- Confirm captured names match Windows virtual-key names.
+- Confirm Home and supported mouse buttons can be detected as the toggle trigger.
+- Confirm captured names match Windows virtual-key or mouse-button names.
 
 ## Baseline
 
@@ -11,7 +11,7 @@
 - Hold `W`, activate, release physical `W`, and verify continued hold.
 - Hold `Shift+W`, activate, release both, and verify continued combo.
 - Hold `A+S+W`, activate, release all three physical keys, and verify all three stay logically down until stop.
-- Stop with the toggle key, physical held-key handoff, and tray `Release All`.
+- Stop with the toggle trigger, physical held-key handoff, and tray `Release All`.
 
 ## Games
 

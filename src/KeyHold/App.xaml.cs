@@ -9,6 +9,7 @@ public partial class App
 {
     private NotifyIconHost? notifyIconHost;
     private KeyboardHookService? keyboardHook;
+    private MouseHookService? mouseHook;
     private KeyHoldEngine? engine;
     private MainWindow? mainWindow;
 
@@ -24,6 +25,7 @@ public partial class App
         var sender = new SendInputService();
         engine = new KeyHoldEngine(settings, sender);
         keyboardHook = new KeyboardHookService(engine);
+        mouseHook = new MouseHookService(engine);
         notifyIconHost = new NotifyIconHost(engine, ShowMainWindow, ExitApplication);
         mainWindow = new MainWindow(settings, config, engine, new StartupService());
         if (isFirstRun)
@@ -40,6 +42,7 @@ public partial class App
         }
 
         keyboardHook.Start();
+        mouseHook.Start();
         notifyIconHost.Update(engine.Status);
 
         engine.StatusChanged += (_, status) =>
@@ -76,6 +79,7 @@ public partial class App
         engine?.ReleaseAll("Application exit");
         engine?.Dispose();
         keyboardHook?.Dispose();
+        mouseHook?.Dispose();
         notifyIconHost?.Dispose();
         base.OnExit(e);
     }

@@ -259,10 +259,10 @@
                             Background="{DynamicResource AppBackgroundBrush}"
                             MaxWidth="420"
                             HorizontalAlignment="Left">
-                    <TextBlock Text="Toggle key" FontWeight="SemiBold" />
+                    <TextBlock Text="Toggle trigger" FontWeight="SemiBold" />
                     <TextBox x:Name="ToggleBindingText" IsReadOnly="True" Focusable="True" />
                     <Button x:Name="CaptureToggleButton"
-                            Content="Set Toggle Key"
+                            Content="Set Toggle Trigger"
                             Margin="0,8,8,0"
                             Click="CaptureToggle_Click" />
                 </StackPanel>
