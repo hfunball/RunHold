@@ -48,6 +48,7 @@ Better future GitHub path:
 - Add a signed installer or signed MSIX when code signing is available.
 - Consider `.appinstaller` for MSIX auto-update checks outside the Store.
 - Submit to WinGet after the first public release asset is stable.
+- Add a GitHub Pages overview page that points to the repo and current release, using the same branding look and feel as the app.
 
 ## Versioning
 

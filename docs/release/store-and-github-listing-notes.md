@@ -38,6 +38,16 @@ Use these phrases naturally in README, release notes, Store copy, and docs where
 - Topics: `windows`, `wpf`, `keyboard`, `tray-app`, `gaming-utility`, `key-hold`, `movement-keys`, `run-key`, `dotnet`, `open-source`.
 - README should include install steps, basic use, tested games, limitations, privacy, security, license, and release links.
 
+## GitHub Pages Overview Page
+
+Create this after the release package and Store path are stable enough that the page will not churn.
+
+- Purpose: give people a clear overview when they search for a Windows utility that can hold movement keys, run keys, or simple keyboard combinations.
+- Visual direction: match the RunHold app, including the blue graphite palette, logo, dark/light-friendly surfaces, and Signal Wash title treatment.
+- Core content: what RunHold does, how to download it, how to use the toggle trigger, tested games, known limitations, privacy, security, license, and a link to `https://github.com/hfunball/RunHold`.
+- Search fit: use the search phrases above naturally, without keyword stuffing.
+- Tone: practical, specific, and plainspoken.
+
 ## Microsoft Store Listing Basics
 
 - Name: `RunHold`

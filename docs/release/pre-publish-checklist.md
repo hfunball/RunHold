@@ -64,6 +64,14 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Include a short release note with tested games and known limitations.
 - [ ] Add GitHub topics such as `windows`, `wpf`, `keyboard`, `tray-app`, `gaming-utility`, `key-hold`, `movement-keys`, and `run-key`.
 
+## GitHub Pages
+
+- [ ] Create a simple GitHub Pages HTML overview page after the release basics are stable.
+- [ ] Link the page to `https://github.com/hfunball/RunHold` and the latest GitHub Release.
+- [ ] Use the same RunHold branding as the app, including the blue graphite palette, logo, and Signal Wash title treatment.
+- [ ] Include a brief overview, download links, basic use steps, tested games, known limitations, privacy, security, and license links.
+- [ ] Keep the page useful for people searching for a held-key, movement-key, or run-key utility without making it feel like heavy marketing.
+
 ## Microsoft Store
 
 - [ ] Reserve `RunHold` in Partner Center.
