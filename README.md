@@ -1,8 +1,6 @@
-# KeyHold
+# RunHold
 
 RunHold is a small Windows 11 tray utility for games and simple personal automation tasks. It captures the keyboard keys you are physically holding when you activate it, keeps those keys held with synthetic input, and releases them when you stop.
-
-The product name is KeyHold. The early brand board keeps KeyLatch as a backup route and parks KeyRun and PressLatch for now.
 
 ## 1.0 Scope
 
@@ -26,6 +24,6 @@ dotnet run --project src/RunHold
 
 ## Security Position
 
-KeyHold monitors keyboard state and supported mouse trigger buttons, and it injects keyboard input, so it is treated as security-sensitive. It does not include networking, telemetry, credential capture, macro recording, or raw typed-text logging.
+RunHold monitors keyboard state and supported mouse trigger buttons, and it injects keyboard input, so it is treated as security-sensitive. It does not include networking, telemetry, credential capture, macro recording, or raw typed-text logging.
 
 See [docs/security/threat-model.md](docs/security/threat-model.md) and [docs/security/security-plan.md](docs/security/security-plan.md).
