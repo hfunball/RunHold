@@ -4,7 +4,7 @@ RunHold is security-sensitive because it monitors keyboard state and supported m
 
 RunHold does not include networking, telemetry, credential capture, macro recording, or raw typed-text logging.
 
-To report a security issue, use the GitHub repository issue/contact path once the repository is public:
+To report a security issue, use the GitHub repository issue or contact path:
 
 https://github.com/hfunball/RunHold
 

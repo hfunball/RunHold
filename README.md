@@ -1,6 +1,6 @@
 # RunHold
 
-RunHold is a small Windows 11 tray utility for games and simple personal automation tasks. It captures the keyboard keys you are physically holding when you activate it, keeps those keys held with synthetic input, and releases them when you stop.
+RunHold is a small Windows tray utility for games and simple personal automation tasks. It captures the keyboard keys you are physically holding when you activate it, keeps those keys held with synthetic input, and releases them when you stop.
 
 It is meant for cases like holding `W`, `Shift+W`, `W+Space`, or other movement-key combinations during long single-player travel. It can also help with simple personal Windows tasks where a held key is useful. RunHold is not a macro recorder, auto-clicker, competitive advantage tool, or anti-cheat bypass.
 
@@ -25,22 +25,17 @@ User guide: [docs/user-guide.md](docs/user-guide.md)
 3. Release the physical keys.
 4. Press the toggle trigger again, press a held key to take control back, or use `Release All`.
 
-## How It Works
-
-1. Hold the key or keys you want RunHold to take over.
-2. Press your toggle trigger. The default trigger is `Home`.
-3. Release the physical keys.
-4. Press the toggle trigger again, press a held key to take control back, or use `Release All`.
-
-## Tested Game Matrix
+## Tested Games
 
 - The Planet Crafter on Steam
 - Subnautica 2
-- Additional games are still being tested.
+- Satisfactory on Steam
+- Defense Grid 2
+- Portal 2
 
 ## Install
 
-For early builds, download the portable ZIP from GitHub Releases:
+Download the portable ZIP from GitHub Releases:
 
 https://github.com/hfunball/RunHold/releases
 
@@ -62,7 +57,7 @@ dotnet run --project src/RunHold
 Release planning lives in [docs/release/release-plan.md](docs/release/release-plan.md).
 
 - GitHub Releases can use `scripts/publish-github.ps1` to produce a self-contained Windows ZIP and checksum.
-- Microsoft Store submission should use an MSIX package after the Store identity is reserved.
+- Microsoft Store submission uses MSIX packaging after the Store identity is assigned in Partner Center.
 - Pre-publish testing lives in [docs/release/pre-publish-checklist.md](docs/release/pre-publish-checklist.md).
 - Store and GitHub listing notes live in [docs/release/store-and-github-listing-notes.md](docs/release/store-and-github-listing-notes.md).
 
@@ -78,4 +73,4 @@ See [SECURITY.md](SECURITY.md), [docs/security/threat-model.md](docs/security/th
 
 ## Contributing
 
-Issues and focused pull requests are welcome once the repository is public. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Issues and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).

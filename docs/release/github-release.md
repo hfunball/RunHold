@@ -1,6 +1,6 @@
 # GitHub Release Path
 
-This path is for early public builds and source users. It does not replace the Microsoft Store path.
+This path is for direct-download builds and source users. It does not replace the Microsoft Store path.
 
 ## Manual local publish
 
@@ -11,13 +11,13 @@ From the repo root:
 .\.tools\dotnet\dotnet.exe build --configuration Release --no-restore
 .\.tools\dotnet\dotnet.exe test --configuration Release --no-build
 .\.tools\dotnet\dotnet.exe restore src\RunHold\RunHold.csproj --runtime win-x64
-.\scripts\publish-github.ps1 -Version 1.11
+.\scripts\publish-github.ps1 -Version 1.2
 ```
 
 Outputs:
 
-- `artifacts\release\RunHold-1.11-win-x64-portable.zip`
-- `artifacts\release\RunHold-1.11-win-x64-portable.zip.sha256.txt`
+- `artifacts\release\RunHold-1.2-win-x64-portable.zip`
+- `artifacts\release\RunHold-1.2-win-x64-portable.zip.sha256.txt`
 
 The ZIP is self-contained and includes the .NET runtime. Users should extract the whole ZIP and run `RunHold.exe`.
 
@@ -26,14 +26,14 @@ The ZIP keeps documentation minimal: the app includes its own Read Me tab, and t
 If you are on a connected machine and want the script to restore as part of publish, use:
 
 ```powershell
-.\scripts\publish-github.ps1 -Version 1.11 -Restore
+.\scripts\publish-github.ps1 -Version 1.2 -Restore
 ```
 
 ## GitHub Actions
 
 The `Release Artifacts` workflow can run two ways:
 
-- Manually through `workflow_dispatch`, using a version like `1.11`.
+- Manually through `workflow_dispatch`, using a version like `1.2`.
 - Automatically when a GitHub Release is published.
 
 When it runs on a published GitHub Release, it builds, tests, creates the portable ZIP, creates a checksum, and uploads both files to the Release.

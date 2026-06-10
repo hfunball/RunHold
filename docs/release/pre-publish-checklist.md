@@ -9,8 +9,8 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Run `.\.tools\dotnet\dotnet.exe build RunHold.slnx --configuration Release --no-restore`.
 - [ ] Run `.\.tools\dotnet\dotnet.exe test RunHold.slnx --configuration Release --no-build`.
 - [ ] Run `.\.tools\dotnet\dotnet.exe restore src\RunHold\RunHold.csproj --runtime win-x64`.
-- [ ] Run `.\scripts\publish-github.ps1 -Version 1.11`.
-- [ ] Confirm `artifacts\release\RunHold-1.11-win-x64-portable.zip` exists.
+- [ ] Run `.\scripts\publish-github.ps1 -Version 1.2`.
+- [ ] Confirm `artifacts\release\RunHold-1.2-win-x64-portable.zip` exists.
 - [ ] Confirm the SHA-256 file exists and matches the ZIP.
 - [ ] Confirm the ZIP includes `LICENSE` and does not copy root-level `README.md`, `PRIVACY.md`, or `SECURITY.md`.
 
@@ -19,7 +19,7 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Extract the ZIP to a clean folder, not the build output folder.
 - [ ] Run `RunHold.exe`.
 - [ ] Confirm the app icon and tray icon show the RunHold logo.
-- [ ] Confirm the Read Me tab shows `Version 1.11`.
+- [ ] Confirm the Read Me tab shows `Version 1.2`.
 - [ ] Confirm the app starts minimized to tray after first-run behavior is handled.
 - [ ] Confirm left-clicking the tray icon opens the UI.
 - [ ] Confirm Settings changes do not crash the app.
@@ -62,7 +62,7 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 
 - [ ] Confirm the repo is named `RunHold`.
 - [ ] Confirm README links point to `https://github.com/hfunball/RunHold`.
-- [ ] Create tag `v1.11`.
+- [ ] Create tag `v1.2`.
 - [ ] Upload the ZIP and SHA-256 file.
 - [ ] Include a short release note with tested games and known limitations.
 - [ ] Add GitHub topics such as `windows`, `wpf`, `keyboard`, `tray-app`, `gaming-utility`, `key-hold`, `movement-keys`, and `run-key`.
@@ -77,8 +77,10 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 
 ## Microsoft Store
 
-- [ ] Reserve `RunHold` in Partner Center.
+- [ ] Confirm `RunHold` is reserved in Partner Center.
 - [ ] Add the Store identity to the MSIX packaging project.
+- [ ] Replace all `REPLACE_WITH...` values in the MSIX templates before producing the Store package.
+- [ ] Confirm the Store package version is `1.2.0.0`.
 - [ ] Confirm startup behavior for packaged apps, especially the opt-in startup task.
 - [ ] Run the Windows App Certification Kit.
 - [ ] Confirm keyboard hooks and synthetic input are acceptable for the Store listing and app behavior.

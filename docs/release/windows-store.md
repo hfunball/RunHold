@@ -16,22 +16,23 @@ Microsoft's current guidance for WPF and WinForms apps is to add a Windows Appli
 
 ## Work still needed
 
-- Reserve the app name in Partner Center.
-- Add a Windows Application Packaging Project in Visual Studio.
+- Confirm the app name and package identity in Partner Center.
+- Add or update the Windows Application Packaging Project in Visual Studio.
 - Assign the Store identity from Partner Center.
+- Replace all `REPLACE_WITH...` values in the MSIX templates before producing the Store package.
 - Add the startup task extension shown in `packaging/msix/Package.appxmanifest.template.xml`.
-- Update the app startup service to use the packaged startup task API when running as MSIX.
+- Update the app startup service to use the packaged startup task API when running as MSIX, if the packaged build does not support the current registry startup path.
 - Generate Store assets from the approved RunHold logo.
 - Run WACK before submission.
 - Test a local MSIX install, upgrade, uninstall, and reinstall.
 
 ## Store update test
 
-Before public release, test this locally with two package versions:
+Before Store submission, test this locally with two package versions:
 
-1. Install package `1.11.0.0`.
+1. Install package `1.2.0.0`.
 2. Configure the toggle trigger, theme, startup setting, and stop-on-any-key setting.
-3. Upgrade to package `1.12.0.0`.
+3. Upgrade to package `1.3.0.0`.
 4. Confirm settings survived.
 5. Confirm startup remains off unless the user opted in.
 6. Confirm hooks and held-key behavior still work after upgrade.

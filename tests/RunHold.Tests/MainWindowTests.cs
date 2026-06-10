@@ -26,7 +26,7 @@ public sealed class MainWindowTests
             Assert.IsFalse(Find<CheckBox>(window, "StopOnAnyKeyBox").IsChecked == true);
             var readMeViewer = Find<FlowDocumentScrollViewer>(window, "ReadMeViewer");
             Assert.AreEqual(new Thickness(0, 0, 35, 0), readMeViewer.Document.PagePadding);
-            Assert.AreEqual("Version 1.11", Find<TextBlock>(window, "ReadMeVersionText").Text);
+            Assert.AreEqual("Version 1.2", Find<TextBlock>(window, "ReadMeVersionText").Text);
             Assert.IsFalse(GetDocumentText(readMeViewer.Document).Contains("# RunHold", StringComparison.Ordinal));
             Assert.IsNull(window.FindName(string.Concat("Activation", "ModeBox")));
             Assert.IsNull(window.FindName(string.Concat("Stop", "BindingPanel")));
@@ -98,7 +98,7 @@ public sealed class MainWindowTests
 
             Assert.AreNotSame(originalDocument, readMeViewer.Document);
             Assert.AreEqual(new Thickness(0, 0, 35, 0), readMeViewer.Document.PagePadding);
-            Assert.AreEqual("Version 1.11", Find<TextBlock>(window, "ReadMeVersionText").Text);
+            Assert.AreEqual("Version 1.2", Find<TextBlock>(window, "ReadMeVersionText").Text);
             Assert.IsFalse(GetDocumentText(readMeViewer.Document).Contains("# RunHold", StringComparison.Ordinal));
         }
         finally

@@ -472,7 +472,7 @@ public partial class MainWindow
                 : informationalVersion;
         }
 
-        return typeof(MainWindow).Assembly.GetName().Version?.ToString(2) ?? "1.11";
+        return typeof(MainWindow).Assembly.GetName().Version?.ToString(2) ?? "1.2";
     }
 
     private Paragraph CreateParagraph(string text, double size, FontWeight weight, double left, double top, double right, double bottom)

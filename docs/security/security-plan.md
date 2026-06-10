@@ -21,16 +21,13 @@
 - Run NuGet audit during restore.
 - Run tests on every pull request.
 
-## Before Public Release
+## Release checks
 
 - Run `dotnet restore`, `dotnet build`, and `dotnet test`.
 - Scan release artifacts with Microsoft Defender.
-- Publish checksums.
+- Publish checksums for direct-download packages.
 - Review startup behavior and config file permissions.
-
-## Before public release
-
 - Sign builds if practical.
-- Add a privacy note.
-- Add game compatibility warnings.
+- Keep the privacy note current.
+- Keep game compatibility warnings current.
 - Run Windows App Certification Kit for any Store-targeted package.
