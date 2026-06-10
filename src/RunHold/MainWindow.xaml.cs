@@ -133,7 +133,6 @@ public partial class MainWindow
         startupEnabled = TryReadStartupEnabled();
         StartupBox.IsChecked = startupEnabled;
         LaunchToTrayBox.IsChecked = settings.LaunchToTray;
-        NotificationsBox.IsChecked = settings.ShowNotifications;
         StopOnAnyKeyBox.IsChecked = settings.StopOnAnyKeyboardPress;
         isLoading = false;
         UpdateBindingUi();
@@ -150,7 +149,6 @@ public partial class MainWindow
         {
             settings.Theme = GetSelectedEnumOrCurrent(ThemeBox, settings.Theme);
             settings.LaunchToTray = LaunchToTrayBox.IsChecked == true;
-            settings.ShowNotifications = NotificationsBox.IsChecked == true;
             settings.StopOnAnyKeyboardPress = StopOnAnyKeyBox.IsChecked == true;
 
             configService.Save(settings);

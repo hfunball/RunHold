@@ -22,6 +22,8 @@ Examples:
 - RunHold works best in games and apps that read held keyboard state.
 - Text apps, browsers, chat apps, and office apps may behave differently from games.
 - Some games, elevated apps, protected processes, anti-cheat tools, mouse software, and existing key bindings may interfere.
+- RunHold uses the Windows theme setting by default.
+- RunHold launches minimized to the tray by default.
 - RunHold does not start with Windows by default. You can turn that on in Settings.
 
 ## History

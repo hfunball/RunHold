@@ -9,3 +9,5 @@ artifacts/
 publish/
 .tools/
 outputs/
+
+/RunHold-*-win-x64/

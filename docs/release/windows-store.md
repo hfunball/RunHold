@@ -31,7 +31,7 @@ Microsoft's current guidance for WPF and WinForms apps is to add a Windows Appli
 Before Store submission, test this locally with two package versions:
 
 1. Install package `1.2.0.0`.
-2. Configure the toggle trigger, theme, startup setting, and stop-on-any-key setting.
+2. Configure the toggle trigger, theme, startup setting, launch-to-tray setting, and stop-on-any-key setting.
 3. Upgrade to package `1.3.0.0`.
 4. Confirm settings survived.
 5. Confirm startup remains off unless the user opted in.

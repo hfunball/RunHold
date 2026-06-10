@@ -15,8 +15,9 @@ User guide: [docs/user-guide.md](docs/user-guide.md)
 - A single keyboard or supported mouse-button toggle activates and stops a hold.
 - No macro recording or playback.
 - No stealth behavior, multiplayer advantage, anti-cheat bypassing, or hidden automation.
-- Dark and light UI themes.
-- Launches minimized to the tray by default. Start with Windows is optional.
+- Uses the Windows theme setting by default, with dark and light theme options.
+- Launches minimized to the tray by default.
+- Start with Windows is optional and off by default.
 
 ## How It Works
 

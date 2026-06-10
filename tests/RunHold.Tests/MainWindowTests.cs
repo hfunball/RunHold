@@ -18,11 +18,18 @@ public sealed class MainWindowTests
     [STATestMethod]
     public void DefaultSettings_ShowHomeToggleOnly()
     {
-        var window = CreateWindow(new AppSettings());
+        var settings = new AppSettings();
+        Assert.AreEqual(RunHold.Models.ThemeMode.System, settings.Theme);
+        Assert.IsTrue(settings.LaunchToTray);
+
+        var window = CreateWindow(settings);
         try
         {
             Assert.AreEqual("Home", Find<TextBox>(window, "ToggleBindingText").Text);
             Assert.AreEqual("Set Toggle Trigger", Find<Button>(window, "CaptureToggleButton").Content);
+            Assert.AreEqual("System", ((ComboBoxItem)Find<ComboBox>(window, "ThemeBox").SelectedItem).Tag);
+            Assert.IsFalse(Find<CheckBox>(window, "StartupBox").IsChecked == true);
+            Assert.IsTrue(Find<CheckBox>(window, "LaunchToTrayBox").IsChecked == true);
             Assert.IsFalse(Find<CheckBox>(window, "StopOnAnyKeyBox").IsChecked == true);
             var readMeViewer = Find<FlowDocumentScrollViewer>(window, "ReadMeViewer");
             Assert.AreEqual(new Thickness(0, 0, 35, 0), readMeViewer.Document.PagePadding);

@@ -328,10 +328,6 @@
                               Content="Launch minimized to tray"
                               Checked="SettingChanged"
                               Unchecked="SettingChanged" />
-                    <CheckBox x:Name="NotificationsBox"
-                              Content="Show tray notifications"
-                              Checked="SettingChanged"
-                              Unchecked="SettingChanged" />
                     <CheckBox x:Name="StopOnAnyKeyBox"
                               Content="Stop key hold with any keyboard button press"
                               Checked="SettingChanged"
