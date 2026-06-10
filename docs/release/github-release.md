@@ -21,6 +21,8 @@ Outputs:
 
 The ZIP is self-contained and includes the .NET runtime. Users should extract the whole ZIP and run `RunHold.exe`.
 
+The ZIP keeps documentation minimal: the app includes its own Read Me tab, and the package includes `LICENSE` for the full MIT license text. Root-level `README.md`, `PRIVACY.md`, and `SECURITY.md` stay in the repository instead of being copied into the portable ZIP.
+
 If you are on a connected machine and want the script to restore as part of publish, use:
 
 ```powershell

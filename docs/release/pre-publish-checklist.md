@@ -12,6 +12,7 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Run `.\scripts\publish-github.ps1 -Version 1.11`.
 - [ ] Confirm `artifacts\release\RunHold-1.11-win-x64-portable.zip` exists.
 - [ ] Confirm the SHA-256 file exists and matches the ZIP.
+- [ ] Confirm the ZIP includes `LICENSE` and does not copy root-level `README.md`, `PRIVACY.md`, or `SECURITY.md`.
 
 ## Portable ZIP Test
 

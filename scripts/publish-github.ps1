@@ -74,10 +74,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $releaseDocs = @(
-    'README.md',
-    'LICENSE',
-    'PRIVACY.md',
-    'SECURITY.md'
+    'LICENSE'
 )
 
 foreach ($releaseDoc in $releaseDocs) {
