@@ -25,14 +25,6 @@ User guide: [docs/user-guide.md](docs/user-guide.md)
 3. Release the physical keys.
 4. Press the toggle trigger again, press a held key to take control back, or use `Release All`.
 
-## Tested Games
-
-- The Planet Crafter on Steam
-- Subnautica 2
-- Satisfactory on Steam
-- Defense Grid 2
-- Portal 2
-
 ## Install
 
 Download the portable ZIP from GitHub Releases:
