@@ -11,7 +11,8 @@
     ProcessorArchitecture="x64"
     Uri="https://github.com/hfunball/RunHold/releases/download/v1.2/RunHold_1.2.0.0_x64.msix" />
 
+  <!-- Future direct-download MSIX path only. The 1.2 Store release relies on Microsoft Store updates. -->
   <UpdateSettings>
-    <OnLaunch HoursBetweenUpdateChecks="24" ShowPrompt="true" UpdateBlocksActivation="false" />
+    <AutomaticBackgroundTask />
   </UpdateSettings>
 </AppInstaller>

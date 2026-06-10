@@ -25,8 +25,21 @@ These values are applied in:
 - Startup with Windows remains opt-in.
 - The packaged startup task should be declared with `Enabled="false"`.
 - The Store package must keep the same identity across updates.
+- Store users receive updates through the Microsoft Store.
 - The Store listing should explain that RunHold is intended for games and simple Windows tasks on an individual PC.
 - The listing and README should not imply anti-cheat bypassing, stealth behavior, or multiplayer advantage.
+- RunHold 1.2 should not include an in-app updater, custom update network code, Velopack, or ClickOnce.
+- `.appinstaller` is reserved for a possible future direct-download MSIX path, not the first Store release.
+
+## Store update process
+
+For every Store update:
+
+1. Keep the package identity unchanged.
+2. Increase the package version, such as from `1.2.0.0` to `1.3.0.0`.
+3. Upload the new MSIX, MSIX bundle, or MSIX upload package through Partner Center.
+4. Let Partner Center certification, Microsoft signing, and Microsoft Store background delivery handle the update.
+5. Confirm user settings still load from `%LOCALAPPDATA%\RunHold\settings.json` after the update.
 
 ## Work still needed
 
@@ -41,11 +54,12 @@ These values are applied in:
 
 ## Store update test
 
-Before Store submission, test this locally with two package versions:
+Before Store submission, test this through Partner Center package flighting or another Store-supported test path:
 
 1. Install package `1.2.0.0`.
 2. Configure the toggle trigger, theme, startup setting, launch-to-tray setting, and stop-on-any-key setting.
-3. Upgrade to package `1.3.0.0`.
-4. Confirm settings survived.
-5. Confirm startup remains off unless the user opted in.
-6. Confirm hooks and held-key behavior still work after upgrade.
+3. Upload or flight package `1.3.0.0` with the same package identity.
+4. Let the Microsoft Store update the installed app.
+5. Confirm settings survived.
+6. Confirm startup remains off unless the user opted in.
+7. Confirm hooks, held-key behavior, tray icon behavior, single-instance relaunch behavior, and the Read Me version still work after update.

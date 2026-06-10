@@ -14,6 +14,13 @@ RunHold helps with games and simple personal Windows tasks where holding movemen
 
 RunHold is intended for individual Windows PCs. It does not record macros, play back scripts, collect telemetry, upload data, or try to bypass anti-cheat tools.
 
+## Update Messaging
+
+- Microsoft Store installs receive updates through the Microsoft Store.
+- GitHub portable ZIP installs update manually by downloading a newer ZIP and replacing the app folder.
+- Do not describe a built-in RunHold updater for 1.2.
+- Do not mention `.appinstaller` in public copy until a direct-download MSIX path exists.
+
 ## Useful Search Phrases
 
 Use these phrases naturally in README, release notes, Store copy, and docs where they fit:
@@ -36,7 +43,7 @@ Use these phrases naturally in README, release notes, Store copy, and docs where
 - Description: `Windows tray utility for holding movement keys and other simple held-key combinations.`
 - Website: Microsoft Store URL after the Store listing is live.
 - Topics: `windows`, `wpf`, `keyboard`, `tray-app`, `gaming-utility`, `key-hold`, `movement-keys`, `run-key`, `dotnet`, `open-source`.
-- README should include install steps, basic use, tested games, limitations, privacy, security, license, and release links.
+- README should include install steps, basic use, limitations, privacy, security, license, update behavior, and release links.
 
 ## GitHub Pages Overview Page
 
@@ -44,7 +51,7 @@ Create this after the release package and Store path are stable enough that the 
 
 - Purpose: give people a clear overview when they search for a Windows utility that can hold movement keys, run keys, or simple keyboard combinations.
 - Visual direction: match the RunHold app, including the blue graphite palette, logo, dark/light-friendly surfaces, and Signal Wash title treatment.
-- Core content: what RunHold does, how to download it, how to use the toggle trigger, tested games, known limitations, privacy, security, license, and a link to `https://github.com/hfunball/RunHold`.
+- Core content: what RunHold does, how to download it, how to use the toggle trigger, known limitations, privacy, security, license, update behavior, and a link to `https://github.com/hfunball/RunHold`.
 - Search fit: use the search phrases above naturally, without keyword stuffing.
 - Tone: practical, specific, and plainspoken.
 

@@ -26,6 +26,7 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Confirm Settings changes do not crash the app.
 - [ ] Confirm settings persist after closing and reopening.
 - [ ] Confirm settings are written to `%LOCALAPPDATA%\RunHold\settings.json`.
+- [ ] Confirm ZIP update instructions say users update manually by downloading a newer ZIP and replacing the app folder.
 
 ## Core Input Tests
 
@@ -66,7 +67,7 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Confirm README links point to `https://github.com/hfunball/RunHold`.
 - [ ] Create tag `v1.2`.
 - [ ] Upload the ZIP and SHA-256 file.
-- [ ] Include a short release note with tested games and known limitations.
+- [ ] Include a short release note with known limitations and manual ZIP update instructions.
 - [ ] Add GitHub topics such as `windows`, `wpf`, `keyboard`, `tray-app`, `gaming-utility`, `key-hold`, `movement-keys`, and `run-key`.
 
 ## GitHub Pages
@@ -74,7 +75,7 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Create a simple GitHub Pages HTML overview page after the release basics are stable.
 - [ ] Link the page to `https://github.com/hfunball/RunHold` and the latest GitHub Release.
 - [ ] Use the same RunHold branding as the app, including the blue graphite palette, logo, and Signal Wash title treatment.
-- [ ] Include a brief overview, download links, basic use steps, tested games, known limitations, privacy, security, and license links.
+- [ ] Include a brief overview, download links, basic use steps, known limitations, privacy, security, license, and update behavior.
 - [ ] Keep the page useful for people searching for a held-key, movement-key, or run-key utility without making it feel like heavy marketing.
 
 ## Microsoft Store
@@ -85,6 +86,9 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Add or update the Windows Application Packaging Project in Visual Studio using the Partner Center identity.
 - [ ] Confirm the Store package version is 1.2.0.0.
 - [ ] Confirm startup behavior for packaged apps, especially the opt-in startup task.
+- [ ] Confirm Store listing or release notes explain that the Store handles automatic updates.
+- [ ] Confirm there is no in-app updater, custom update network code, Velopack, or ClickOnce path in 1.2.
+- [ ] For update testing, install 1.2, upload or flight a higher Store package version, and confirm settings survive the Store update.
 - [ ] Run the Windows App Certification Kit.
 - [ ] Confirm keyboard hooks and synthetic input are acceptable for the Store listing and app behavior.
 - [ ] Use the listing notes in `docs/release/store-and-github-listing-notes.md`.

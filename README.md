@@ -29,11 +29,13 @@ User guide: [docs/user-guide.md](docs/user-guide.md)
 
 ## Install
 
-Download the portable ZIP from GitHub Releases:
+After Microsoft Store publication, the Store package is the recommended install path. Store installs receive updates through the Microsoft Store.
+
+Direct downloads are available from GitHub Releases:
 
 https://github.com/hfunball/RunHold/releases
 
-Extract the ZIP and run `RunHold.exe`. Settings are stored outside the app folder in `%LOCALAPPDATA%\RunHold\settings.json`, so they should survive replacing the app folder during upgrades.
+For the portable ZIP, extract the ZIP and run `RunHold.exe`. ZIP installs update manually by downloading a newer ZIP and replacing the app folder. Settings are stored outside the app folder in `%LOCALAPPDATA%\RunHold\settings.json`, so they should survive folder replacement.
 
 ## Build
 
@@ -50,8 +52,8 @@ dotnet run --project src/RunHold
 
 Release planning lives in [docs/release/release-plan.md](docs/release/release-plan.md).
 
-- GitHub Releases can use `scripts/publish-github.ps1` to produce a self-contained Windows ZIP and checksum.
-- Microsoft Store submission uses MSIX packaging after the Store identity is assigned in Partner Center.
+- Microsoft Store submission uses MSIX packaging after the Store identity is assigned in Partner Center. Store users receive updates through the Microsoft Store.
+- GitHub Releases can use `scripts/publish-github.ps1` to produce a self-contained Windows ZIP and checksum. ZIP users update manually.
 - Pre-publish testing lives in [docs/release/pre-publish-checklist.md](docs/release/pre-publish-checklist.md).
 - Store and GitHub listing notes live in [docs/release/store-and-github-listing-notes.md](docs/release/store-and-github-listing-notes.md).
 

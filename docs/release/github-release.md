@@ -47,11 +47,14 @@ For the portable ZIP:
 - Extract it over the old folder or to a new folder.
 - Run `RunHold.exe`.
 
-Settings are stored outside the app folder in `%LOCALAPPDATA%\RunHold\settings.json`.
+The portable ZIP does not auto-update in 1.2. GitHub ZIP users update manually by downloading a newer ZIP and replacing the app folder.
+
+Settings are stored outside the app folder in `%LOCALAPPDATA%\RunHold\settings.json`, so they should survive folder replacement.
 
 ## Later GitHub improvements
 
 - Sign release binaries.
 - Add an installer for Start menu shortcuts and uninstall support.
-- Add MSIX plus `.appinstaller` for update checks, if direct-download auto-update becomes important.
+- Add signed MSIX plus `.appinstaller` for direct-download update checks, if direct-download auto-update becomes important.
+- If `.appinstaller` is used later, prefer silent background checks rather than a prompt on each launch.
 - Submit a WinGet manifest after the GitHub release asset URL and package identifier are stable.
