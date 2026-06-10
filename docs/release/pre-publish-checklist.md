@@ -22,6 +22,7 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 - [ ] Confirm the Read Me tab shows `Version 1.2`.
 - [ ] Confirm the app starts minimized to tray after first-run behavior is handled.
 - [ ] Confirm left-clicking the tray icon opens the UI.
+- [ ] Relaunch RunHold while it is already running and confirm no second tray icon appears.
 - [ ] Confirm Settings changes do not crash the app.
 - [ ] Confirm settings persist after closing and reopening.
 - [ ] Confirm settings are written to `%LOCALAPPDATA%\RunHold\settings.json`.
@@ -52,6 +53,7 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 
 - [ ] Alt-tab while RunHold is holding keys, then release.
 - [ ] Exit RunHold from the tray while holding keys and confirm keys release.
+- [ ] While holding keys through RunHold, relaunch RunHold and confirm the held keys remain controlled by the original instance.
 - [ ] Restart RunHold after a hold and confirm no stale held state.
 - [ ] Sleep/wake while holding if you are comfortable testing it.
 - [ ] Disconnect/reconnect keyboard if you are comfortable testing it.

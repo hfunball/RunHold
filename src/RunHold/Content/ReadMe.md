@@ -7,6 +7,7 @@
 - The toggle trigger can be a keyboard key or extended mouse button, such as Mouse Button 4. Primary left and right mouse buttons are not used as triggers.
 - Press the toggle trigger to start and again to stop. In some games, pressing and releasing a held key is the most reliable way to take control back.
 - RunHold uses the Windows theme setting by default and launches minimized to the tray by default.
+- If RunHold is already running, launching it again shows the running splash instead of opening another copy.
 - RunHold does not start with Windows by default in case it conflicts with other software on your PC. You can turn this on in Settings, but note that your toggle trigger may be bound to RunHold and may not function normally in other applications while RunHold is active.
 - RunHold may not behave like a normal text tool in Notepad, office apps, chat apps, or browsers. Games and Windows apps look at keyboard input in different ways.
 

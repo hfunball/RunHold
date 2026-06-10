@@ -9,16 +9,35 @@ namespace RunHold;
 
 public partial class App
 {
+    private SingleInstanceService? singleInstance;
     private NotifyIconHost? notifyIconHost;
     private KeyboardHookService? keyboardHook;
     private MouseHookService? mouseHook;
     private RunHoldEngine? engine;
     private MainWindow? mainWindow;
+    private StartupSplashWindow? startupSplashWindow;
     private bool safetyHandlersRegistered;
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        singleInstance = new SingleInstanceService();
+        var singleInstanceResult = singleInstance.TryStart();
         base.OnStartup(e);
+
+        if (!singleInstanceResult.IsFirstInstance)
+        {
+            if (singleInstanceResult.SignalDelivered)
+            {
+                Shutdown();
+                return;
+            }
+
+            ThemeService.Apply(RunHold.Models.ThemeMode.System);
+            ShowStartupSplashAndExit();
+            return;
+        }
+
+        singleInstance.StartListening(() => QueueOnUi(ShowStartupSplash));
 
         var config = new ConfigService();
         var settings = config.Load();
@@ -72,8 +91,7 @@ public partial class App
         {
             if (isFirstRun)
             {
-                var splash = new StartupSplashWindow();
-                splash.Show();
+                ShowStartupSplash();
             }
 
             mainWindow.Hide();
@@ -91,6 +109,7 @@ public partial class App
         keyboardHook?.Dispose();
         mouseHook?.Dispose();
         notifyIconHost?.Dispose();
+        singleInstance?.Dispose();
         base.OnExit(e);
     }
 
@@ -110,6 +129,38 @@ public partial class App
     {
         mainWindow?.AllowClose();
         Shutdown();
+    }
+
+    private void ShowStartupSplash()
+    {
+        if (startupSplashWindow is { IsVisible: true })
+        {
+            startupSplashWindow.Restart();
+            return;
+        }
+
+        var splash = new StartupSplashWindow();
+        startupSplashWindow = splash;
+        splash.Closed += (_, _) =>
+        {
+            if (ReferenceEquals(startupSplashWindow, splash))
+            {
+                startupSplashWindow = null;
+            }
+        };
+        splash.Show();
+    }
+
+    private void ShowStartupSplashAndExit()
+    {
+        ShowStartupSplash();
+        if (startupSplashWindow is not { } splash)
+        {
+            Shutdown();
+            return;
+        }
+
+        splash.Closed += (_, _) => Shutdown();
     }
 
     private void RegisterSafetyHandlers()

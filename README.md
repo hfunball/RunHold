@@ -17,6 +17,7 @@ User guide: [docs/user-guide.md](docs/user-guide.md)
 - No stealth behavior, multiplayer advantage, anti-cheat bypassing, or hidden automation.
 - Uses the Windows theme setting by default, with dark and light theme options.
 - Launches minimized to the tray by default.
+- Relaunching RunHold while it is already running shows the running splash instead of opening another copy.
 - Start with Windows is optional and off by default. If enabled, your toggle trigger may be bound to RunHold and may not function normally in other applications while RunHold is active.
 
 ## How It Works

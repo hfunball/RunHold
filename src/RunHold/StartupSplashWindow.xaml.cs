@@ -7,21 +7,12 @@ namespace RunHold;
 public partial class StartupSplashWindow
 {
     private static readonly TimeSpan DisplayDuration = TimeSpan.FromSeconds(3);
+    private readonly DispatcherTimer timer;
 
     public StartupSplashWindow()
     {
         InitializeComponent();
-        Loaded += OnLoaded;
-    }
-
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        PositionNearNotificationArea();
-        DismissProgress.BeginAnimation(
-            System.Windows.Controls.Primitives.RangeBase.ValueProperty,
-            new DoubleAnimation(100, 0, DisplayDuration));
-
-        var timer = new DispatcherTimer
+        timer = new DispatcherTimer
         {
             Interval = DisplayDuration
         };
@@ -30,7 +21,33 @@ public partial class StartupSplashWindow
             timer.Stop();
             Close();
         };
+        Loaded += OnLoaded;
+    }
+
+    public void Restart()
+    {
+        PositionNearNotificationArea();
+        DismissProgress.BeginAnimation(
+            System.Windows.Controls.Primitives.RangeBase.ValueProperty,
+            null);
+        DismissProgress.Value = 100;
+        DismissProgress.BeginAnimation(
+            System.Windows.Controls.Primitives.RangeBase.ValueProperty,
+            new DoubleAnimation(100, 0, DisplayDuration));
+
+        timer.Stop();
         timer.Start();
+
+        if (IsVisible)
+        {
+            Topmost = false;
+            Topmost = true;
+        }
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        Restart();
     }
 
     private void PositionNearNotificationArea()

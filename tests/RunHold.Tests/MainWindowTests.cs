@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace RunHold.Tests;
 
 [TestClass]
+[DoNotParallelize]
 public sealed class MainWindowTests
 {
     private const int A = 0x41;
