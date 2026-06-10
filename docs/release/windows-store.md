@@ -6,6 +6,20 @@ RunHold should use MSIX for Microsoft Store submission.
 
 Microsoft's current guidance for WPF and WinForms apps is to add a Windows Application Packaging Project when targeting Store submission. The Store handles signing and updates for submitted MSIX packages.
 
+## Product identity
+
+Partner Center identity values for RunHold:
+
+- Store ID: `9P1R3CL046B8`
+- Package/Identity/Name: `HappyFunBall.RunHold`
+- Package/Identity/Publisher: `CN=CEA2A27B-8832-49E7-B7D1-294BCA25A640`
+- Package/Properties/PublisherDisplayName: `HappyFunBall`
+
+These values are applied in:
+
+- `packaging/msix/Package.appxmanifest.template.xml`
+- `packaging/msix/RunHold.appinstaller.template.xml`
+
 ## Decisions for RunHold
 
 - Startup with Windows remains opt-in.
@@ -16,11 +30,10 @@ Microsoft's current guidance for WPF and WinForms apps is to add a Windows Appli
 
 ## Work still needed
 
-- Confirm the app name and package identity in Partner Center.
 - Add or update the Windows Application Packaging Project in Visual Studio.
-- Assign the Store identity from Partner Center.
-- Replace all `REPLACE_WITH...` values in the MSIX templates before producing the Store package.
-- Add the startup task extension shown in `packaging/msix/Package.appxmanifest.template.xml`.
+- Assign or confirm the Store identity in the packaging project.
+- Generate the actual `.msixupload`, `.msixbundle`, or `.msix` Store package.
+- Add the startup task extension shown in `packaging/msix/Package.appxmanifest.template.xml` to the packaged manifest.
 - Update the app startup service to use the packaged startup task API when running as MSIX, if the packaged build does not support the current registry startup path.
 - Generate Store assets from the approved RunHold logo.
 - Run WACK before submission.

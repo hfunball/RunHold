@@ -9,7 +9,7 @@ RunHold supports two distribution lanes:
 
 - The app is a WPF desktop app.
 - The GitHub release path has a publish script and release workflow that produce a self-contained `win-x64` portable ZIP with a SHA-256 checksum.
-- The Store path uses MSIX. Before submission, confirm the packaging project has the Partner Center identity values and the packaged startup behavior has been tested.
+- The Store path uses MSIX. Partner Center identity values are captured in the MSIX templates, but the Windows Application Packaging Project and packaged startup behavior still need to be completed and tested.
 
 ## Microsoft Store lane
 
@@ -24,7 +24,7 @@ Expected user experience:
 
 Before Store submission:
 
-- Confirm the RunHold Store identity in Partner Center.
+- Confirm the RunHold Store identity in Partner Center. Current Store ID: `9P1R3CL046B8`.
 - Add or update the Windows Application Packaging Project in the solution.
 - Assign the Store identity from Partner Center.
 - Add a packaged startup task with `Enabled="false"` so startup remains opt-in.

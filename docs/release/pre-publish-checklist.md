@@ -77,10 +77,11 @@ Use this before publishing a GitHub Release or submitting to the Microsoft Store
 
 ## Microsoft Store
 
-- [ ] Confirm `RunHold` is reserved in Partner Center.
-- [ ] Add the Store identity to the MSIX packaging project.
-- [ ] Replace all `REPLACE_WITH...` values in the MSIX templates before producing the Store package.
-- [ ] Confirm the Store package version is `1.2.0.0`.
+- [x] Confirm `RunHold` is reserved in Partner Center.
+- [x] Capture Partner Center Store ID and package identity values.
+- [x] Replace all `REPLACE_WITH...` values in the MSIX templates before producing the Store package.
+- [ ] Add or update the Windows Application Packaging Project in Visual Studio using the Partner Center identity.
+- [ ] Confirm the Store package version is 1.2.0.0.
 - [ ] Confirm startup behavior for packaged apps, especially the opt-in startup task.
 - [ ] Run the Windows App Certification Kit.
 - [ ] Confirm keyboard hooks and synthetic input are acceptable for the Store listing and app behavior.

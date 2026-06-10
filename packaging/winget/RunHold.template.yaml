@@ -1,7 +1,7 @@
-PackageIdentifier: REPLACE_WITH_PUBLISHER.RunHold
+PackageIdentifier: HappyFunBall.RunHold
 PackageVersion: 1.2
 PackageLocale: en-US
-Publisher: REPLACE_WITH_PUBLISHER
+Publisher: HappyFunBall
 PackageName: RunHold
 License: MIT
 ShortDescription: Held-key utility for games and simple Windows tasks.
@@ -14,6 +14,6 @@ Installers:
       - RelativeFilePath: RunHold.exe
         PortableCommandAlias: runhold
     InstallerUrl: https://github.com/hfunball/RunHold/releases/download/v1.2/RunHold-1.2-win-x64-portable.zip
-    InstallerSha256: REPLACE_WITH_SHA256
+    InstallerSha256: 15BBDA6F576A69E672512024E620BD130222B8AB3CCB11F2DD5550C6674CA0C8
 ManifestType: singleton
 ManifestVersion: 1.12.0

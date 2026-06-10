@@ -7,14 +7,14 @@
   IgnorableNamespaces="uap desktop rescap">
 
   <Identity
-    Name="REPLACE_WITH_PARTNER_CENTER_PACKAGE_NAME"
-    Publisher="CN=REPLACE_WITH_PARTNER_CENTER_PUBLISHER"
+    Name="HappyFunBall.RunHold"
+    Publisher="CN=CEA2A27B-8832-49E7-B7D1-294BCA25A640"
     Version="1.2.0.0"
     ProcessorArchitecture="x64" />
 
   <Properties>
     <DisplayName>RunHold</DisplayName>
-    <PublisherDisplayName>REPLACE_WITH_PUBLISHER_DISPLAY_NAME</PublisherDisplayName>
+    <PublisherDisplayName>HappyFunBall</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 

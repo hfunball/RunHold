@@ -51,6 +51,8 @@ Create this after the release package and Store path are stable enough that the 
 ## Microsoft Store Listing Basics
 
 - Name: `RunHold`
+- Store ID: `9P1R3CL046B8`
+- Store listing URL after publication: `https://apps.microsoft.com/detail/9P1R3CL046B8`
 - Category: Utilities and tools, unless Partner Center suggests a better fit.
 - Short description: `Hold movement keys and simple keyboard combinations from the Windows tray.`
 - Search terms to consider: `keyboard`, `movement keys`, `hold key`, `run key`, `gaming utility`, `tray utility`.
