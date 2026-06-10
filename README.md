@@ -1,6 +1,6 @@
 # RunHold
 
-RunHold is a small Windows tray utility for games and simple personal automation tasks. It captures the keyboard keys you are physically holding when you activate it, keeps those keys held with synthetic input, and releases them when you stop.
+RunHold is a small Windows tray utility for games and simple Windows tasks where holding movement keys gets repetitive. It captures the keyboard keys you are physically holding when you activate it, keeps those keys held with synthetic input, and releases them when you stop.
 
 It is meant for cases like holding `W`, `Shift+W`, `W+Space`, or other movement-key combinations during long single-player travel. It can also help with simple personal Windows tasks where a held key is useful. RunHold is not a macro recorder, auto-clicker, competitive advantage tool, or anti-cheat bypass.
 
@@ -12,17 +12,17 @@ User guide: [docs/user-guide.md](docs/user-guide.md)
 
 - Keyboard hold only.
 - Target: stable hold for up to three captured keyboard keys.
-- A single keyboard or supported mouse-button toggle activates and stops a hold.
+- A single keyboard key or supported mouse button activates and stops a hold. Primary left and right mouse buttons are not used as triggers.
 - No macro recording or playback.
 - No stealth behavior, multiplayer advantage, anti-cheat bypassing, or hidden automation.
 - Uses the Windows theme setting by default, with dark and light theme options.
 - Launches minimized to the tray by default.
-- Start with Windows is optional and off by default.
+- Start with Windows is optional and off by default. If enabled, your toggle trigger may be bound to RunHold and may not function normally in other applications while RunHold is active.
 
 ## How It Works
 
 1. Hold the key or keys you want RunHold to take over.
-2. Press your toggle trigger. The default trigger is `Home`.
+2. Press your toggle trigger. The default trigger is `Home` and can be customized.
 3. Release the physical keys.
 4. Press the toggle trigger again, press a held key to take control back, or use `Release All`.
 
@@ -56,7 +56,7 @@ Release planning lives in [docs/release/release-plan.md](docs/release/release-pl
 
 ## License
 
-RunHold is licensed under the [MIT License](LICENSE).
+RunHold is licensed under the [MIT License](LICENSE). Copyright (c) 2026 Hfunball and RunHold contributors.
 
 ## Security Position
 
